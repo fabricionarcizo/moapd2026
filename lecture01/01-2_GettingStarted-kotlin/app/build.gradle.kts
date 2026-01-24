@@ -7,10 +7,7 @@ plugins {
 
 android {
     namespace = "dk.itu.moapd.gettingstarted"
-    compileSdk {
-        version = release(36)
-    }
-
+    compileSdk = 36
     defaultConfig {
         applicationId = "dk.itu.moapd.gettingstarted"
         minSdk = 28
