@@ -58,11 +58,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        // Sets whether the decor view should fit root-level content views for `WindowInsetsCompat`.
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-
         // Call the super class onCreate to complete the creation of activity.
         super.onCreate(savedInstanceState);
+
+        // Sets whether the decor view should fit root-level content views for `WindowInsetsCompat`.
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_main);
     }
 
