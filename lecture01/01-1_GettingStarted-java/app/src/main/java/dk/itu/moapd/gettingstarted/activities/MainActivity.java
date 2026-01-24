@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         name = name.isEmpty() ? DEFAULT_NAME : name;
 
         // Add the final String into the text view component.
-        TextView messageTextView = findViewById(R.id.text_view);
+        TextView messageTextView = findViewById(R.id.text_view_message);
         String message = String.format("Hello, %s!", name);
         messageTextView.setText(message);
 
