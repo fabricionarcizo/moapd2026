@@ -38,6 +38,11 @@ import dk.itu.moapd.gettingstarted.R;
 public class MainActivity extends AppCompatActivity {
 
     /**
+     * Default name to use when no name is provided.
+     */
+    private static final String DEFAULT_NAME = "World";
+
+    /**
      * Called when the activity is starting. This is where most initialization should go: calling
      * `setContentView(int)` to inflate the activity's UI, using `findViewById()` to
      * programmatically interact with widgets in the UI, calling
@@ -79,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
         String name = editTextName.getText().toString().trim();
         editTextName.clearFocus();
 
-        final String DEFAULT_NAME = "World";
         name = name.isEmpty() ? DEFAULT_NAME : name;
 
         // Add the final String into the text view component.
