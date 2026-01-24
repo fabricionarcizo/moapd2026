@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">GettingStarted</string>
     <string name="edit_text_name">Enter your name</string>
-    <string name="edit_text_name_description">Input field for entering your name</string>
     <string name="button_send">Send</string>
 </resources>
