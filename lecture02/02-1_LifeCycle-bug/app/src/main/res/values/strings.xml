@@ -5,6 +5,6 @@
     <string name="check_box_select">Select this option</string>
     <string name="true_text">You clicked on the true button</string>
     <string name="false_text">You clicked on the false button</string>
-    <string name="selected_text">"You %s the checkbox"</string>
+    <string name="selected_text">You %s the checkbox</string>
     <string name="initial_text">Hello World!</string>
 </resources>
