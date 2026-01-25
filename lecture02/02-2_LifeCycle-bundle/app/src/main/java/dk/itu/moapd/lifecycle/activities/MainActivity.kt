@@ -173,8 +173,8 @@ class MainActivity : AppCompatActivity() {
      * simultaneously, so `onTopResumedActivityChanged(boolean)` should be used for that purpose
      * instead.
      *
-     * <Derived classes must call through to the super class's implementation of this method. If
-     * they do not, an exception will be thrown.
+     * <em>Derived classes must call through to the super class's implementation of this method. If
+     * they do not, an exception will be thrown.</em>
      */
     override fun onResume() {
         super.onResume()
