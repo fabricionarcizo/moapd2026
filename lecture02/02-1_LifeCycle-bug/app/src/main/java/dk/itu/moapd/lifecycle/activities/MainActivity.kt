@@ -89,13 +89,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Sets up the user interface components by attaching click listeners to the `trueButton`,
-     * `falseButton`, and `checkBox`. When the `trueButton` is clicked, it updates the text in the
-     * `ViewModel` with the string resource associated with `R.string.true_text`. When the
-     * `falseButton` is clicked, it updates the text in the `ViewModel` with the string resource
-     * associated with `R.string.false_text`. When the `checkBox` is clicked, it toggles its checked
-     * state in the `ViewModel` and updates the text accordingly, displaying either "checked" or
-     * "unchecked" depending on the current state of the `checkBox`.
+     * Sets up the user interface components by attaching click listeners to `buttonTrue`,
+     * `buttonFalse`, and `checkBoxSelect`. When `buttonTrue` is clicked, it updates
+     * `textViewMessage` with the string resource associated with `R.string.true_text`. When
+     * `buttonFalse` is clicked, it updates `textViewMessage` with the string resource associated
+     * with `R.string.false_text`. When the checked state of `checkBoxSelect` changes, it updates
+     * `textViewMessage` with the string resource `R.string.selected_text`, formatted with either
+     * "checked" or "unchecked" depending on whether the checkbox is selected.
      */
     private fun setupUI() {
         binding.apply {
