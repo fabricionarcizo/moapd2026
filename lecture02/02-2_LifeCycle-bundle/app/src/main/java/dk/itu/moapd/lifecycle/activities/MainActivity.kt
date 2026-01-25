@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
      *
      * You can call `finish()` from within this function, in which case `onDestroy()` will be
      * immediately called after `onCreate()` without any of the rest of the activity lifecycle
-     * (`onStart()`, `onResume()`, onPause()`, etc) executing.
+     * (`onStart()`, `onResume()`, `onPause()`, etc) executing.
      *
      * <em>Derived classes must call through to the super class's implementation of this method. If
      * they do not, an exception will be thrown.</em>
