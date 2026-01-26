@@ -18,9 +18,8 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package dk.itu.moapd.gettingstarted.activities
+package dk.itu.moapd.gettingstarted.presentation.main
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -67,7 +66,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // Set the user interface layout for this Activity.
         setContentView(R.layout.activity_main)
+
+        // Handle window insets to support edge-to-edge content.
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_activity)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -82,17 +85,32 @@ class MainActivity : AppCompatActivity() {
      *             components.
      */
     fun sendMessage(view: View) {
-        // Get the name from the edit text component. If empty, use the default name.
+        sendMessage()
+        hideKeyboard(view)
+    }
+
+    /**
+     * Sends a message by updating the TextView with a greeting that includes the name entered
+     * in the EditText. If no name is entered, a default name is used.
+     */
+    private fun sendMessage() {
         val editTextName: EditText = findViewById(R.id.edit_text_name)
-        val name = editTextName.text.ifEmpty { DEFAULT_NAME }
+        val name = editTextName.text.trim().ifEmpty { DEFAULT_NAME }
         editTextName.clearFocus()
 
-        // Add the final String into the text view component.
-        val messageTextView: TextView = findViewById(R.id.text_view_message)
-        messageTextView.text = getString(R.string.text_view_message, name.trim())
+        val textViewMessage: TextView = findViewById(R.id.text_view_message)
+        textViewMessage.text = getString(R.string.text_view_message, name)
+    }
 
-        // Hide the virtual keyboard.
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-        imm?.hideSoftInputFromWindow(view.windowToken, 0)
+    /**
+     * Hides the soft keyboard.
+     *
+     * @param anchorView An optional view to anchor the keyboard hiding operation.
+     */
+    private fun hideKeyboard(anchorView: View? = null) {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager ?: return
+
+        val token = (currentFocus?.windowToken ?: anchorView?.windowToken) ?: return
+        imm.hideSoftInputFromWindow(token, 0)
     }
 }
