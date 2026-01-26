@@ -18,12 +18,11 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package dk.itu.moapd.gettingstarted.activities;
+package dk.itu.moapd.gettingstarted.presentation.main;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -36,7 +35,6 @@ import dk.itu.moapd.gettingstarted.R;
  * An activity class with methods to manage the main activity of Getting Started application.
  */
 public class MainActivity extends AppCompatActivity {
-
     /**
      * Default name to use when no name is provided.
      */
@@ -78,24 +76,35 @@ public class MainActivity extends AppCompatActivity {
      *             components.
      */
     public void sendMessage(View view) {
+        sendMessage();
+        hideKeyboard(view);
+    }
 
-        // Get the name from the edit text component. If empty, use the default name.
+    /**
+     * Sends a message by updating the TextView with a greeting that includes the name entered
+     * in the EditText. If no name is entered, a default name is used.
+     */
+    private void sendMessage() {
         EditText editTextName = findViewById(R.id.edit_text_name);
         String name = editTextName.getText().toString().trim();
         editTextName.clearFocus();
 
         name = name.isEmpty() ? DEFAULT_NAME : name;
 
-        // Add the final String into the text view component.
         TextView messageTextView = findViewById(R.id.text_view_message);
         String message = String.format("Hello, %s!", name);
         messageTextView.setText(message);
+    }
 
-        // Hide the virtual keyboard.
-        InputMethodManager imm =
-                (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+    /**
+     * Hides the soft keyboard.
+     *
+     * @param anchorView An optional view to anchor the keyboard hiding operation.
+     */
+    private void hideKeyboard(View anchorView) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         if (imm != null) {
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(anchorView.getWindowToken(), 0);
         }
     }
 
