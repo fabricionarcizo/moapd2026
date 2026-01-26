@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>NewLineAtEndOfFile:FragmentViewBindingDelegate.kt:dk.itu.moapd.listview.utils.FragmentViewBindingDelegate.kt</ID>
+  </CurrentIssues>
+</SmellBaseline>
