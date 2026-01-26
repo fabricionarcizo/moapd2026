@@ -22,8 +22,11 @@ package dk.itu.moapd.lifecycle.presentation.main
 
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import dk.itu.moapd.lifecycle.R
 import dk.itu.moapd.lifecycle.databinding.ActivityMainBinding
 
@@ -76,11 +79,19 @@ class MainActivity : AppCompatActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
         // Migrate from Kotlin synthetics to Jetpack view binding.
         // https://developer.android.com/topic/libraries/view-binding/migration
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Handle window insets to support edge-to-edge content.
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_activity)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         // Set up the UI components and observe the view model.
         setupUI()
@@ -110,9 +121,8 @@ class MainActivity : AppCompatActivity() {
 
             checkBoxSelect.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (!buttonView.isPressed) return@setOnCheckedChangeListener
-                viewModel.onCheckedChanged(isChecked) { status ->
-                    getString(R.string.selected_text, status)
-                }
+                val status = if (isChecked) "checked" else "unchecked"
+                viewModel.setMessage(getString(R.string.selected_text, status))
             }
         }
 

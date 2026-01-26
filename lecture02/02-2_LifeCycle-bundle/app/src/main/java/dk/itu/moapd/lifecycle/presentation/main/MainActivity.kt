@@ -18,7 +18,7 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package dk.itu.moapd.lifecycle.activities
+package dk.itu.moapd.lifecycle.presentation.main
 
 import android.os.Bundle
 import android.util.Log
@@ -34,19 +34,20 @@ import dk.itu.moapd.lifecycle.databinding.ActivityMainBinding
  */
 class MainActivity : AppCompatActivity() {
     /**
+     * A set of private constants used in this class.
+     */
+    companion object {
+        private val TAG = MainActivity::class.qualifiedName
+        private const val KEY_LAST_MESSAGE = "key_last_message"
+    }
+
+    /**
      * View binding is a feature that allows you to more easily write code that interacts with
      * views. Once view binding is enabled in a module, it generates a binding class for each XML
      * layout file present in that module. An instance of a binding class contains direct references
      * to all views that have an ID in the corresponding layout.
      */
     private lateinit var binding: ActivityMainBinding
-
-    /**
-     * A set of private constants used in this class.
-     */
-    companion object {
-        private val TAG = MainActivity::class.qualifiedName
-    }
 
     /**
      * Called when the activity is starting. This is where most initialization should go: calling
@@ -82,23 +83,24 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // Set up the UI components.
+        // Set up the UI components and observe the view model.
+        restoreState(savedInstanceState)
         setupUI()
 
         Log.d(TAG, "onCreate() method called.")
     }
 
     /**
-     * Sets up the user interface components by attaching click listeners to `buttonTrue`,
-     * `buttonFalse`, and `checkBoxSelect`. When `buttonTrue` is clicked, it updates
-     * `textViewMessage` with the string resource associated with `R.string.true_text`. When
-     * `buttonFalse` is clicked, it updates `textViewMessage` with the string resource associated
-     * with `R.string.false_text`. When the checked state of `checkBoxSelect` changes, it updates
-     * `textViewMessage` with the string resource `R.string.selected_text`, formatted with either
-     * "checked" or "unchecked" depending on whether the checkbox is selected.
+     * Sets up the user interface components by attaching click listeners to the `buttonTrue`,
+     * `buttonFalse`, and `checkBoxSelect`. When the `buttonTrue` is clicked, it updates the text in
+     * the `ViewModel` with the string resource associated with `R.string.true_text`. When the
+     * `buttonFalse` is clicked, it updates the text in the `ViewModel` with the string resource
+     * associated with `R.string.false_text`. When the `checkBoxSelect` is clicked, it toggles its
+     * checked state in the `ViewModel` and updates the text accordingly, displaying either
+     * "checked" or "unchecked" depending on the current state of the `checkBoxSelect`.
      */
-    private fun setupUI() {
-        binding.apply {
+    private fun setupUI() =
+        with(binding) {
             buttonTrue.setOnClickListener {
                 textViewMessage.text = getString(R.string.true_text)
             }
@@ -107,11 +109,73 @@ class MainActivity : AppCompatActivity() {
                 textViewMessage.text = getString(R.string.false_text)
             }
 
-            checkBoxSelect.setOnCheckedChangeListener { _, isChecked ->
+            checkBoxSelect.setOnCheckedChangeListener { buttonView, isChecked ->
+                if (!buttonView.isPressed) return@setOnCheckedChangeListener
                 val status = if (isChecked) "checked" else "unchecked"
-                textViewMessage.text = getString(R.string.selected_text, status)
+                textViewMessage.text = resources.getString(R.string.selected_text, status)
             }
         }
+
+    /**
+     * Restores the state of the activity from the provided `savedInstanceState` bundle. If the
+     * bundle is not null, it retrieves the last message stored under the key `KEY_LAST_MESSAGE`
+     * and sets it as the text of the `textViewMessage`. If the bundle is null, it sets the text
+     * to the initial text defined in the string resources.
+     *
+     * @param savedInstanceState The bundle containing the saved state of the activity, or null if
+     *      there is no saved state.
+     */
+    private fun restoreState(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null) return
+        binding.textViewMessage.text =
+            savedInstanceState.getString(
+                KEY_LAST_MESSAGE,
+                getString(R.string.initial_text),
+            )
+    }
+
+    /**
+     * Called to retrieve per-instance state from an activity before being killed so that the state
+     * can be restored in `onCreate()` or `onRestoreInstanceState()` (the `Bundle` populated by this
+     * method will be passed to both).
+     *
+     * This method is called before an activity may be killed so that when it comes back some time
+     * in the future it can restore its state. For example, if activity `B` is launched in front of
+     * activity `A`, and at some point activity `A` is killed to reclaim resources, activity `A`
+     * will have a chance to save the current state of its user interface via this method so that
+     * when the user returns to activity `A`, the state of the user interface can be restored via
+     * `onCreate()` or `onRestoreInstanceState()`.
+     *
+     * Do not confuse this method with activity lifecycle callbacks such as `onPause()`, which is
+     * always called when the user no longer actively interacts with an activity, or `onStop()`
+     * which is called when activity becomes invisible. One example of when `onPause()` and
+     * `onStop()` is called and not this method is when a user navigates back from activity `B` to
+     * activity `A`: there is no need to call `onSaveInstanceState()` on `B` because that particular
+     * instance will never be restored, so the system avoids calling it. An example when `onPause()`
+     * is called and not `onSaveInstanceState()` is when activity `B` is launched in front of
+     * activity `A`: the system may avoid calling `onSaveInstanceState()` on activity `A` if it
+     * isn't killed during the lifetime of `B` since the state of the user interface of `A` will
+     * stay intact.
+     *
+     * The default implementation takes care of most of the UI per-instance state for you by calling
+     * `android.view.View#onSaveInstanceState()` on each view in the hierarchy that has an id, and
+     * by saving the id of the currently focused view (all of which is restored by the default
+     * implementation of `onRestoreInstanceState()`. If you override this method to save additional
+     * information not captured by each individual view, you will likely want to call through to the
+     * default implementation, otherwise be prepared to save all of the state of each view yourself.
+     *
+     * If called, this method will occur after `onStop()` for applications targeting platforms
+     * starting with `android.os.Build.VERSION_CODES#P`. For applications targeting earlier platform
+     * versions this method will occur before `onStop()` and there are no guarantees about whether
+     * it will occur before or after `onPause()`.
+     */
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        binding.apply {
+            outState.putString(KEY_LAST_MESSAGE, textViewMessage.text.toString())
+        }
+
+        Log.d(TAG, "onSaveInstanceState() method called.")
     }
 
     /**

@@ -18,33 +18,27 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package dk.itu.moapd.gettingstarted.activities
+package dk.itu.moapd.gettingstarted.presentation.main;
 
-import android.content.Context
-import android.os.Bundle
-import android.view.View
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import dk.itu.moapd.gettingstarted.R
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
+
+import android.os.Bundle;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import dk.itu.moapd.gettingstarted.R;
 
 /**
  * An activity class with methods to manage the main activity of Getting Started application.
  */
-class MainActivity : AppCompatActivity() {
+public class MainActivity extends AppCompatActivity {
     /**
-     * Companion object to hold constant values.
+     * Default name to use when no name is provided.
      */
-    companion object {
-        /**
-         * Default name to use when no name is provided.
-         */
-        private const val DEFAULT_NAME = "World"
-    }
+    private static final String DEFAULT_NAME = "World";
 
     /**
      * Called when the activity is starting. This is where most initialization should go: calling
@@ -55,7 +49,7 @@ class MainActivity : AppCompatActivity() {
      *
      * You can call `finish()` from within this function, in which case `onDestroy()` will be
      * immediately called after `onCreate()` without any of the rest of the activity lifecycle
-     * (`onStart()`, `onResume()`, onPause()`, etc) executing.
+     * (`onStart()`, `onResume()`, `onPause()`, etc) executing.
      *
      * <em>Derived classes must call through to the super class's implementation of this method. If
      * they do not, an exception will be thrown.</em>
@@ -64,15 +58,15 @@ class MainActivity : AppCompatActivity() {
      * down then this Bundle contains the data it most recently supplied in `onSaveInstanceState()`.
      * <b><i>Note: Otherwise it is null.</i></b>
      */
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_activity)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+        // Call the super class onCreate to complete the creation of activity.
+        super.onCreate(savedInstanceState);
+
+        // Sets whether the decor view should fit root-level content views for `WindowInsetsCompat`.
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        setContentView(R.layout.activity_main);
     }
 
     /**
@@ -81,18 +75,37 @@ class MainActivity : AppCompatActivity() {
      * @param view An instance that represents the basic building block for user interface
      *             components.
      */
-    fun sendMessage(view: View) {
-        // Get the name from the edit text component. If empty, use the default name.
-        val editTextName: EditText = findViewById(R.id.edit_text_name)
-        val name = editTextName.text.ifEmpty { DEFAULT_NAME }
-        editTextName.clearFocus()
-
-        // Add the final String into the text view component.
-        val messageTextView: TextView = findViewById(R.id.text_view_message)
-        messageTextView.text = getString(R.string.text_view_message, name.trim())
-
-        // Hide the virtual keyboard.
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-        imm?.hideSoftInputFromWindow(view.windowToken, 0)
+    public void sendMessage(View view) {
+        sendMessage();
+        hideKeyboard(view);
     }
+
+    /**
+     * Sends a message by updating the TextView with a greeting that includes the name entered
+     * in the EditText. If no name is entered, a default name is used.
+     */
+    private void sendMessage() {
+        EditText editTextName = findViewById(R.id.edit_text_name);
+        String name = editTextName.getText().toString().trim();
+        editTextName.clearFocus();
+
+        name = name.isEmpty() ? DEFAULT_NAME : name;
+
+        TextView messageTextView = findViewById(R.id.text_view_message);
+        String message = String.format("Hello, %s!", name);
+        messageTextView.setText(message);
+    }
+
+    /**
+     * Hides the soft keyboard.
+     *
+     * @param anchorView An optional view to anchor the keyboard hiding operation.
+     */
+    private void hideKeyboard(View anchorView) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(anchorView.getWindowToken(), 0);
+        }
+    }
+
 }
