@@ -42,6 +42,9 @@ opencv-4.*/
 # Android Profiling
 *.hprof
 
+# Binary files
+*.zip
+
 ### Android Patch ###
 gen-external-apklibs
 
