@@ -18,7 +18,7 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package dk.itu.moapd.lifecycle.activities
+package dk.itu.moapd.lifecycle.activities.presentation.main
 
 import android.os.Bundle
 import android.util.Log
@@ -97,8 +97,8 @@ class MainActivity : AppCompatActivity() {
      * `textViewMessage` with the string resource `R.string.selected_text`, formatted with either
      * "checked" or "unchecked" depending on whether the checkbox is selected.
      */
-    private fun setupUI() {
-        binding.apply {
+    private fun setupUI() =
+        with(binding) {
             buttonTrue.setOnClickListener {
                 textViewMessage.text = getString(R.string.true_text)
             }
@@ -107,12 +107,12 @@ class MainActivity : AppCompatActivity() {
                 textViewMessage.text = getString(R.string.false_text)
             }
 
-            checkBoxSelect.setOnCheckedChangeListener { _, isChecked ->
+            checkBoxSelect.setOnCheckedChangeListener { buttonView, isChecked ->
+                if (!buttonView.isPressed) return@setOnCheckedChangeListener
                 val status = if (isChecked) "checked" else "unchecked"
-                textViewMessage.text = getString(R.string.selected_text, status)
+                textViewMessage.text = resources.getString(R.string.selected_text, status)
             }
         }
-    }
 
     /**
      * Called after `onCreate()` or after `onRestart()` when the activity had been stopped, but is
