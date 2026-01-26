@@ -110,9 +110,8 @@ class MainActivity : AppCompatActivity() {
 
             checkBoxSelect.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (!buttonView.isPressed) return@setOnCheckedChangeListener
-                viewModel.onCheckedChanged(isChecked) { status ->
-                    getString(R.string.selected_text, status)
-                }
+                val status = if (isChecked) "checked" else "unchecked"
+                viewModel.setMessage(getString(R.string.selected_text, status))
             }
         }
 

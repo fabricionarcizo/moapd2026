@@ -40,17 +40,6 @@ class MainViewModel : ViewModel() {
         get() = _message
 
     /**
-     * The current status of the UI checkbox.
-     */
-    private val _isChecked = MutableLiveData(false)
-
-    /**
-     * A `LiveData` which publicly exposes any update in the UI checkbox.
-     */
-    val isChecked: LiveData<Boolean>
-        get() = _isChecked
-
-    /**
      * This method will be executed when the user interacts with any UI component and it is
      * necessary to update the text in the UI TextView. It sets the text into the LiveData instance.
      *
@@ -58,23 +47,5 @@ class MainViewModel : ViewModel() {
      */
     fun setMessage(text: String) {
         _message.value = text
-    }
-
-    /**
-     * This method will be executed when the user interacts with the UI checkbox and it is necessary
-     * to update its status and the text in the UI TextView. It sets the checkbox status and the
-     * text into their respective LiveData instances.
-     *
-     * @param checked A `Boolean` representing the current status of the checkbox.
-     * @param selectedText A lambda function that takes a `String` and returns a `String` to be
-     *      shown in the UI TextView based on the checkbox status.
-     */
-    fun onCheckedChanged(
-        checked: Boolean,
-        selectedText: (String) -> String,
-    ) {
-        _isChecked.value = checked
-        val status = if (checked) "checked" else "unchecked"
-        _message.value = selectedText(status)
     }
 }
