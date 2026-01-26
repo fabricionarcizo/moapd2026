@@ -18,11 +18,14 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package dk.itu.moapd.lifecycle.activities
+package dk.itu.moapd.lifecycle.presentation.main
 
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import dk.itu.moapd.lifecycle.R
 import dk.itu.moapd.lifecycle.databinding.ActivityMainBinding
 
@@ -31,21 +34,20 @@ import dk.itu.moapd.lifecycle.databinding.ActivityMainBinding
  */
 class MainActivity : AppCompatActivity() {
     /**
+     * A set of private constants used in this class.
+     */
+    companion object {
+        private val TAG = MainActivity::class.qualifiedName
+        private const val KEY_LAST_MESSAGE = "key_last_message"
+    }
+
+    /**
      * View binding is a feature that allows you to more easily write code that interacts with
      * views. Once view binding is enabled in a module, it generates a binding class for each XML
      * layout file present in that module. An instance of a binding class contains direct references
      * to all views that have an ID in the corresponding layout.
      */
     private lateinit var binding: ActivityMainBinding
-
-    /**
-     * A set of private constants used in this class.
-     */
-    companion object {
-        private val TAG = MainActivity::class.qualifiedName
-        private const val TEXT_VIEW = "TEXT_VIEW"
-        private const val CHECK_BOX = "CHECK_BOX"
-    }
 
     /**
      * Called when the activity is starting. This is where most initialization should go: calling
@@ -67,13 +69,38 @@ class MainActivity : AppCompatActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
         // Migrate from Kotlin synthetics to Jetpack view binding.
         // https://developer.android.com/topic/libraries/view-binding/migration
         binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        // Define the UI components behavior.
-        binding.apply {
+        // Handle window insets to support edge-to-edge content.
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_activity)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
+        // Set up the UI components and observe the view model.
+        restoreState(savedInstanceState)
+        setupUI()
+
+        Log.d(TAG, "onCreate() method called.")
+    }
+
+    /**
+     * Sets up the user interface components by attaching click listeners to the `buttonTrue`,
+     * `buttonFalse`, and `checkBoxSelect`. When the `buttonTrue` is clicked, it updates the text in
+     * the `ViewModel` with the string resource associated with `R.string.true_text`. When the
+     * `buttonFalse` is clicked, it updates the text in the `ViewModel` with the string resource
+     * associated with `R.string.false_text`. When the `checkBoxSelect` is clicked, it toggles its
+     * checked state in the `ViewModel` and updates the text accordingly, displaying either
+     * "checked" or "unchecked" depending on the current state of the `checkBoxSelect`.
+     */
+    private fun setupUI() =
+        with(binding) {
             buttonTrue.setOnClickListener {
                 textViewMessage.text = getString(R.string.true_text)
             }
@@ -82,22 +109,29 @@ class MainActivity : AppCompatActivity() {
                 textViewMessage.text = getString(R.string.false_text)
             }
 
-            checkBoxSelect.setOnCheckedChangeListener { _, isChecked ->
+            checkBoxSelect.setOnCheckedChangeListener { buttonView, isChecked ->
+                if (!buttonView.isPressed) return@setOnCheckedChangeListener
                 val status = if (isChecked) "checked" else "unchecked"
                 textViewMessage.text = resources.getString(R.string.selected_text, status)
             }
-
-            // Retrieve per-instance state.
-            savedInstanceState?.let {
-                checkBoxSelect.isChecked = it.getBoolean(CHECK_BOX, false)
-                textViewMessage.text = it.getString(TEXT_VIEW, "Hello World!")
-            }
         }
 
-        // Inflate the user interface into the current activity.
-        setContentView(binding.root)
-
-        Log.d(TAG, "onCreate() method called.")
+    /**
+     * Restores the state of the activity from the provided `savedInstanceState` bundle. If the
+     * bundle is not null, it retrieves the last message stored under the key `KEY_LAST_MESSAGE`
+     * and sets it as the text of the `textViewMessage`. If the bundle is null, it sets the text
+     * to the initial text defined in the string resources.
+     *
+     * @param savedInstanceState The bundle containing the saved state of the activity, or null if
+     *      there is no saved state.
+     */
+    private fun restoreState(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null) return
+        binding.textViewMessage.text =
+            savedInstanceState.getString(
+                KEY_LAST_MESSAGE,
+                getString(R.string.initial_text),
+            )
     }
 
     /**
@@ -136,12 +170,11 @@ class MainActivity : AppCompatActivity() {
      * it will occur before or after `onPause()`.
      */
     override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
         binding.apply {
-            outState.putString(TEXT_VIEW, textViewMessage.text.toString())
-            outState.putBoolean(CHECK_BOX, checkBoxSelect.isChecked)
+            outState.putString(KEY_LAST_MESSAGE, textViewMessage.text.toString())
         }
 
-        super.onSaveInstanceState(outState)
         Log.d(TAG, "onSaveInstanceState() method called.")
     }
 
