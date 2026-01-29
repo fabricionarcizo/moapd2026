@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>NewLineAtEndOfFile:AlbumsFragment.kt:dk.itu.moapd.viewpager.ui.pages.albums.AlbumsFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:ArticlesFragment.kt:dk.itu.moapd.viewpager.ui.pages.articles.ArticlesFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:ContactsFragment.kt:dk.itu.moapd.viewpager.ui.pages.contacts.ContactsFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:Dimens.kt:dk.itu.moapd.viewpager.ui.common.Dimens.kt</ID>
+    <ID>NewLineAtEndOfFile:FragmentViewBindingDelegate.kt:dk.itu.moapd.viewpager.utils.FragmentViewBindingDelegate.kt</ID>
+  </CurrentIssues>
+</SmellBaseline>
