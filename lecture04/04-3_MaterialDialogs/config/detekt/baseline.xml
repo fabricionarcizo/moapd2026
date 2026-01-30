@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ForbiddenComment:AlertFragment.kt:AlertFragment$// TODO: Respond to negative button press.</ID>
+    <ID>ForbiddenComment:AlertFragment.kt:AlertFragment$// TODO: Respond to neutral button press.</ID>
+    <ID>ForbiddenComment:AlertFragment.kt:AlertFragment$// TODO: Respond to positive button press.</ID>
+    <ID>ForbiddenComment:ConfirmationFragment.kt:ConfirmationFragment$// TODO: Respond to item chosen.</ID>
+    <ID>ForbiddenComment:ConfirmationFragment.kt:ConfirmationFragment$// TODO: Respond to neutral button press.</ID>
+    <ID>ForbiddenComment:ConfirmationFragment.kt:ConfirmationFragment$// TODO: Respond to positive button press.</ID>
+    <ID>ForbiddenComment:SimpleFragment.kt:SimpleFragment$// TODO: Respond to item chosen.</ID>
+    <ID>NewLineAtEndOfFile:AlertFragment.kt:dk.itu.moapd.materialdialogs.ui.dialogs.AlertFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:ConfirmationFragment.kt:dk.itu.moapd.materialdialogs.ui.dialogs.ConfirmationFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:FragmentViewBindingDelegate.kt:dk.itu.moapd.materialdialogs.ui.utils.FragmentViewBindingDelegate.kt</ID>
+    <ID>NewLineAtEndOfFile:MainActivity.kt:dk.itu.moapd.materialdialogs.ui.main.MainActivity.kt</ID>
+    <ID>NewLineAtEndOfFile:MainFragment.kt:dk.itu.moapd.materialdialogs.ui.main.MainFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:SimpleFragment.kt:dk.itu.moapd.materialdialogs.ui.dialogs.SimpleFragment.kt</ID>
+  </CurrentIssues>
+</SmellBaseline>
