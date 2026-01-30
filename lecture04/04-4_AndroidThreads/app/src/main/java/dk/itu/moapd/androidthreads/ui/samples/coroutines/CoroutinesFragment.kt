@@ -100,11 +100,6 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
             // Start/Stop button.
             startButton.setOnClickListener {
                 viewModel.status = !viewModel.status
-                if (viewModel.status) {
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        updateTask()
-                    }
-                }
                 updateButtons()
             }
 
@@ -112,12 +107,13 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
             updateButtons()
         }
 
-        // In the case of changing the device orientation.
+        // Launch a single lifecycle-aware coroutine that monitors status changes.
+        // This ensures only one coroutine is active, even after configuration changes.
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                if (viewModel.status) {
-                    updateTask()
-                }
+                // Continuously run the update task.
+                // The task itself will only execute when viewModel.status is true.
+                updateTask()
             }
         }
     }
