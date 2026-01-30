@@ -141,11 +141,11 @@ class HandlerFragment : Fragment(R.layout.fragment_handler) {
      */
     override fun onDestroyView() {
         super.onDestroyView()
-        // Interrupt and clean up the running thread to prevent thread leaks
+        // Remove all pending messages and callbacks first to prevent memory leaks and crashes
+        handler.removeCallbacksAndMessages(null)
+        // Then interrupt and clean up the running thread to prevent thread leaks
         handlerThread?.interrupt()
         handlerThread = null
-        // Remove all pending messages and callbacks to prevent memory leaks and crashes
-        handler.removeCallbacksAndMessages(null)
     }
 
     /**
