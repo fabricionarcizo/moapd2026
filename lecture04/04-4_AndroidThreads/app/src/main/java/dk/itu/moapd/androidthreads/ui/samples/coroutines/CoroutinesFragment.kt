@@ -107,13 +107,14 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
             // Start/Stop button.
             startButton.setOnClickListener {
                 viewModel.status = !viewModel.status
-                updateButtons()
                 // Manage the coroutine based on status
                 if (viewModel.status) {
                     startUpdateTask()
                 } else {
                     stopUpdateTask()
                 }
+                // Update UI after managing the coroutine
+                updateButtons()
             }
 
             // The initial value of the button status.
@@ -124,7 +125,8 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
         // This ensures the coroutine restarts if it was running before the lifecycle stopped.
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                if (viewModel.status) {
+                // Only start if status is true and there's no active job
+                if (viewModel.status && updateJob?.isActive != true) {
                     startUpdateTask()
                 }
             }
@@ -146,15 +148,20 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
     }
 
     /**
-     * Starts the update task coroutine if it's not already running.
-     * This ensures only one instance of the task runs at a time.
+     * Starts the update task coroutine. Cancels any existing job first
+     * to ensure only one instance of the task runs at a time.
      */
     private fun startUpdateTask() {
-        // Cancel any existing job first to ensure single instance
+        // Only start if not already active
+        if (updateJob?.isActive == true) return
+        
+        // Cancel any completed job before starting a new one
         updateJob?.cancel()
         updateJob =
             viewLifecycleOwner.lifecycleScope.launch {
                 updateTask()
+                // Clear the job reference when the coroutine completes naturally
+                updateJob = null
             }
     }
 
