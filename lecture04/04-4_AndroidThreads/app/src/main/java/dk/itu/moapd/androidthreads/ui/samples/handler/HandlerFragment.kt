@@ -66,6 +66,11 @@ class HandlerFragment : Fragment(R.layout.fragment_handler) {
     private val viewModel: DataViewModel by viewModels()
 
     /**
+     * Reference to the currently running thread to enable proper cleanup.
+     */
+    private var handlerThread: Thread? = null
+
+    /**
      * Called immediately after `onCreateView(LayoutInflater, ViewGroup, Bundle)` has returned, but
      * before any saved state has been restored in to the view.  This gives subclasses a chance to
      * initialize themselves once they know their view hierarchy has been completely created.  The
@@ -90,9 +95,16 @@ class HandlerFragment : Fragment(R.layout.fragment_handler) {
 
             // Start/Stop button.
             startButton.setOnClickListener {
-                viewModel.status = !viewModel.status
                 if (viewModel.status) {
-                    Thread(HandlerTask()).start()
+                    // Stop: interrupt thread first, then update status
+                    handlerThread?.interrupt()
+                    handlerThread = null
+                    viewModel.status = false
+                } else {
+                    // Start: create and start new thread
+                    viewModel.status = true
+                    handlerThread = Thread(HandlerTask())
+                    handlerThread?.start()
                 }
                 updateButtons()
             }
@@ -108,8 +120,25 @@ class HandlerFragment : Fragment(R.layout.fragment_handler) {
 
         // In the case of changing the device orientation.
         if (viewModel.status) {
-            Thread(HandlerTask()).start()
+            // Clean up any existing thread before creating a new one
+            handlerThread?.interrupt()
+            handlerThread = Thread(HandlerTask())
+            handlerThread?.start()
         }
+    }
+
+    /**
+     * Called when the view previously created by `onCreateView()` has been detached from the
+     * fragment. The next time the fragment needs to be displayed, a new view will be created.
+     * This is called after `onStop()` and before `onDestroy()`. It is called regardless of
+     * whether `onCreateView()` returned a non-null view. Internally it is called after the view's
+     * state has been saved but before it has been removed from its parent.
+     */
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // Interrupt and clean up the running thread to prevent thread leaks
+        handlerThread?.interrupt()
+        handlerThread = null
     }
 
     /**
@@ -138,15 +167,16 @@ class HandlerFragment : Fragment(R.layout.fragment_handler) {
          * The general contract of the method `run()` is that it may take any action whatsoever.
          */
         override fun run() {
-            // Run this block until the user presses the stop button.
-            while (viewModel.status) {
-                // Stops the worker thread for 100 milliseconds.
+            // Run this block until the user presses the stop button or the thread is interrupted.
+            while (viewModel.status && !Thread.currentThread().isInterrupted) {
+                // Stops the worker thread for 250 milliseconds.
                 try {
                     Thread.sleep(250)
                     Log.d(TAG, "`HandlerTask` cont is ${viewModel.cont.value}.")
                 } catch (e: InterruptedException) {
-                    e.printStackTrace()
-                    Log.e(TAG, e.toString())
+                    // Thread was interrupted, exit gracefully
+                    Log.d(TAG, "`HandlerTask` interrupted, exiting gracefully.")
+                    return
                 }
 
                 // Send a post to update the progress bar in the UI thread.
