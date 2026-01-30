@@ -2,20 +2,20 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>InvalidPackageDeclaration:CoroutinesFragment.kt:package dk.itu.moapd.threads.ui.samples.coroutines</ID>
-    <ID>InvalidPackageDeclaration:DataViewModel.kt:package dk.itu.moapd.threads.ui.shared</ID>
-    <ID>InvalidPackageDeclaration:HandlerFragment.kt:package dk.itu.moapd.threads.ui.samples.handler</ID>
-    <ID>InvalidPackageDeclaration:MainActivity.kt:package dk.itu.moapd.threads.ui.main</ID>
-    <ID>InvalidPackageDeclaration:ThreadFragment.kt:package dk.itu.moapd.threads.ui.samples.thread</ID>
-    <ID>InvalidPackageDeclaration:ThreadsApplication.kt:package dk.itu.moapd.threads.app</ID>
+    <ID>InvalidPackageDeclaration:CoroutinesFragment.kt:package dk.itu.moapd.androidthreads.ui.samples.coroutines</ID>
+    <ID>InvalidPackageDeclaration:DataViewModel.kt:package dk.itu.moapd.androidthreads.ui.shared</ID>
+    <ID>InvalidPackageDeclaration:HandlerFragment.kt:package dk.itu.moapd.androidthreads.ui.samples.handler</ID>
+    <ID>InvalidPackageDeclaration:MainActivity.kt:package dk.itu.moapd.androidthreads.ui.main</ID>
+    <ID>InvalidPackageDeclaration:ThreadFragment.kt:package dk.itu.moapd.androidthreads.ui.samples.thread</ID>
+    <ID>InvalidPackageDeclaration:ThreadsApplication.kt:package dk.itu.moapd.androidthreads.app</ID>
     <ID>MagicNumber:CoroutinesFragment.kt:CoroutinesFragment$50</ID>
     <ID>MagicNumber:DataViewModel.kt:DataViewModel$100</ID>
     <ID>MagicNumber:DataViewModel.kt:DataViewModel$101</ID>
     <ID>MagicNumber:HandlerFragment.kt:HandlerFragment.HandlerTask$250</ID>
     <ID>MagicNumber:ThreadFragment.kt:ThreadFragment.ThreadTask$100</ID>
-    <ID>NewLineAtEndOfFile:CoroutinesFragment.kt:dk.itu.moapd.threads.ui.samples.coroutines.CoroutinesFragment.kt</ID>
-    <ID>NewLineAtEndOfFile:HandlerFragment.kt:dk.itu.moapd.threads.ui.samples.handler.HandlerFragment.kt</ID>
-    <ID>NewLineAtEndOfFile:ThreadFragment.kt:dk.itu.moapd.threads.ui.samples.thread.ThreadFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:CoroutinesFragment.kt:dk.itu.moapd.androidthreads.ui.samples.coroutines.CoroutinesFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:HandlerFragment.kt:dk.itu.moapd.androidthreads.ui.samples.handler.HandlerFragment.kt</ID>
+    <ID>NewLineAtEndOfFile:ThreadFragment.kt:dk.itu.moapd.androidthreads.ui.samples.thread.ThreadFragment.kt</ID>
     <ID>PrintStackTrace:HandlerFragment.kt:HandlerFragment.HandlerTask$e</ID>
     <ID>PrintStackTrace:ThreadFragment.kt:ThreadFragment.ThreadTask$e</ID>
   </CurrentIssues>
