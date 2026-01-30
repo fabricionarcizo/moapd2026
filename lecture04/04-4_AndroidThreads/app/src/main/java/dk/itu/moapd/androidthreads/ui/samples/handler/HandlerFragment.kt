@@ -95,13 +95,16 @@ class HandlerFragment : Fragment(R.layout.fragment_handler) {
 
             // Start/Stop button.
             startButton.setOnClickListener {
-                viewModel.status = !viewModel.status
                 if (viewModel.status) {
-                    handlerThread = Thread(HandlerTask())
-                    handlerThread?.start()
-                } else {
+                    // Stop: interrupt thread first, then update status
                     handlerThread?.interrupt()
                     handlerThread = null
+                    viewModel.status = false
+                } else {
+                    // Start: create and start new thread
+                    viewModel.status = true
+                    handlerThread = Thread(HandlerTask())
+                    handlerThread?.start()
                 }
                 updateButtons()
             }
@@ -117,6 +120,8 @@ class HandlerFragment : Fragment(R.layout.fragment_handler) {
 
         // In the case of changing the device orientation.
         if (viewModel.status) {
+            // Clean up any existing thread before creating a new one
+            handlerThread?.interrupt()
             handlerThread = Thread(HandlerTask())
             handlerThread?.start()
         }
@@ -164,13 +169,12 @@ class HandlerFragment : Fragment(R.layout.fragment_handler) {
         override fun run() {
             // Run this block until the user presses the stop button or the thread is interrupted.
             while (viewModel.status && !Thread.currentThread().isInterrupted) {
-                // Stops the worker thread for 100 milliseconds.
+                // Stops the worker thread for 250 milliseconds.
                 try {
                     Thread.sleep(250)
                     Log.d(TAG, "`HandlerTask` cont is ${viewModel.cont.value}.")
                 } catch (e: InterruptedException) {
                     // Thread was interrupted, exit gracefully
-                    Thread.currentThread().interrupt()
                     Log.d(TAG, "`HandlerTask` interrupted, exiting gracefully.")
                     return
                 }
