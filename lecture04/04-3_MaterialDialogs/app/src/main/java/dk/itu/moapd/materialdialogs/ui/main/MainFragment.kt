@@ -53,12 +53,13 @@ class MainFragment :
     /**
      * A list of dialog options to be displayed in the RecyclerView.
      */
-    private val dialogOptions =
+    private val dialogOptions by lazy {
         listOf(
-            DialogOption("Alert Dialog", R.id.show_fragment_alert),
-            DialogOption("Simple Dialog", R.id.show_fragment_simple),
-            DialogOption("Confirmation Dialog", R.id.show_fragment_confirmation),
+            DialogOption(getString(R.string.fragment_alert), R.id.show_fragment_alert),
+            DialogOption(getString(R.string.fragment_simple), R.id.show_fragment_simple),
+            DialogOption(getString(R.string.fragment_confirmation), R.id.show_fragment_confirmation),
         )
+    }
 
     /**
      * Called immediately after `onCreateView(LayoutInflater, ViewGroup, Bundle)` has returned, but
