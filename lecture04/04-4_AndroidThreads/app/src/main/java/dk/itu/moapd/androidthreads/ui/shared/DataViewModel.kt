@@ -71,6 +71,6 @@ class DataViewModel(
      * than 100.
      */
     fun increaseCont() {
-        _cont.value = (_cont.value?.plus(1))?.mod(101)
+        _cont.postValue((_cont.value?.plus(1))?.mod(101))
     }
 }
