@@ -32,6 +32,7 @@ import dk.itu.moapd.androidthreads.R
 import dk.itu.moapd.androidthreads.databinding.FragmentCoroutinesBinding
 import dk.itu.moapd.androidthreads.ui.shared.DataViewModel
 import dk.itu.moapd.androidthreads.ui.utils.viewBinding
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -57,6 +58,12 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
      * to all views that have an ID in the corresponding layout.
      */
     private val binding by viewBinding(FragmentCoroutinesBinding::bind)
+
+    /**
+     * Job to track the running coroutine task, allowing proper cancellation and single-instance
+     * enforcement.
+     */
+    private var updateJob: Job? = null
 
     /**
      * The `DataViewModel` instance is created using the `by viewModels()` Kotlin property delegate,
@@ -101,19 +108,25 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
             startButton.setOnClickListener {
                 viewModel.status = !viewModel.status
                 updateButtons()
+                // Manage the coroutine based on status
+                if (viewModel.status) {
+                    startUpdateTask()
+                } else {
+                    stopUpdateTask()
+                }
             }
 
             // The initial value of the button status.
             updateButtons()
         }
 
-        // Use repeatOnLifecycle as the single source of truth for coroutine management.
-        // This continuously monitors the status and runs updateTask only when status is true,
-        // ensuring proper lifecycle handling and preventing duplicate coroutines during
-        // configuration changes like device rotation.
+        // Use repeatOnLifecycle to restore the task after configuration changes.
+        // This ensures the coroutine restarts if it was running before the lifecycle stopped.
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                updateTask()
+                if (viewModel.status) {
+                    startUpdateTask()
+                }
             }
         }
     }
@@ -133,21 +146,35 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
     }
 
     /**
+     * Starts the update task coroutine if it's not already running.
+     * This ensures only one instance of the task runs at a time.
+     */
+    private fun startUpdateTask() {
+        // Cancel any existing job first to ensure single instance
+        updateJob?.cancel()
+        updateJob =
+            viewLifecycleOwner.lifecycleScope.launch {
+                updateTask()
+            }
+    }
+
+    /**
+     * Stops the update task coroutine if it's running.
+     */
+    private fun stopUpdateTask() {
+        updateJob?.cancel()
+        updateJob = null
+    }
+
+    /**
      * This method will be executed in an asynchronous Coroutine thread running in the background.
      */
     private suspend fun updateTask() {
-        // Keep collecting while the lifecycle is in STARTED state.
-        // The flow only emits when status is true.
         flow {
-            while (true) {
-                if (viewModel.status) {
-                    emit(Unit)
-                    delay(50)
-                    Log.d(TAG, "`CoroutinesTask` cont is ${viewModel.cont.value}.")
-                } else {
-                    // Small delay when not active to avoid busy waiting
-                    delay(50)
-                }
+            while (viewModel.status) {
+                emit(Unit)
+                delay(50)
+                Log.d(TAG, "`CoroutinesTask` cont is ${viewModel.cont.value}.")
             }
         }.collect {
             viewModel.increaseCont()
