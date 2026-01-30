@@ -63,7 +63,7 @@ class DataViewModel(
      * This method resets `cont` variable.
      */
     fun resetCont() {
-        _cont.value = 0
+        _cont.postValue(0)
     }
 
     /**
