@@ -64,15 +64,15 @@ class AlertFragment : Fragment(R.layout.fragment_alert) {
             .setCancelable(false)
             .setNeutralButton(getString(R.string.cancel)) { _, _ ->
                 // TODO: Respond to neutral button press.
-                view.showSnackBar("Cancelled")
+                view.showSnackBar(getString(R.string.snackbar_cancelled))
                 showMainFragment()
             }.setNegativeButton(getString(R.string.decline)) { _, _ ->
                 // TODO: Respond to negative button press.
-                view.showSnackBar("Declined")
+                view.showSnackBar(getString(R.string.snackbar_declined))
                 showMainFragment()
             }.setPositiveButton(getString(R.string.accept)) { _, _ ->
                 // TODO: Respond to positive button press.
-                view.showSnackBar("Accepted")
+                view.showSnackBar(getString(R.string.snackbar_accepted))
                 showMainFragment()
             }.show()
     }
