@@ -32,6 +32,7 @@ import dk.itu.moapd.androidthreads.R
 import dk.itu.moapd.androidthreads.databinding.FragmentCoroutinesBinding
 import dk.itu.moapd.androidthreads.ui.shared.DataViewModel
 import dk.itu.moapd.androidthreads.ui.utils.viewBinding
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -57,6 +58,12 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
      * to all views that have an ID in the corresponding layout.
      */
     private val binding by viewBinding(FragmentCoroutinesBinding::bind)
+
+    /**
+     * Job to track the running coroutine task, allowing proper cancellation and single-instance
+     * enforcement.
+     */
+    private var updateJob: Job? = null
 
     /**
      * The `DataViewModel` instance is created using the `by viewModels()` Kotlin property delegate,
@@ -100,11 +107,13 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
             // Start/Stop button.
             startButton.setOnClickListener {
                 viewModel.status = !viewModel.status
+                // Manage the coroutine based on status
                 if (viewModel.status) {
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        updateTask()
-                    }
+                    startUpdateTask()
+                } else {
+                    stopUpdateTask()
                 }
+                // Update UI after managing the coroutine
                 updateButtons()
             }
 
@@ -112,11 +121,13 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
             updateButtons()
         }
 
-        // In the case of changing the device orientation.
+        // Use repeatOnLifecycle to restore the task after configuration changes.
+        // This ensures the coroutine restarts if it was running before the lifecycle stopped.
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                if (viewModel.status) {
-                    updateTask()
+                // Only start if status is true and there's no active job
+                if (viewModel.status && updateJob?.isActive != true) {
+                    startUpdateTask()
                 }
             }
         }
@@ -134,6 +145,32 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
 
         // Update the reset button enabled state using a higher-order function.
         binding.resetButton.isEnabled = viewModel.status
+    }
+
+    /**
+     * Starts the update task coroutine. Cancels any existing job first
+     * to ensure only one instance of the task runs at a time.
+     */
+    private fun startUpdateTask() {
+        // Only start if not already active
+        if (updateJob?.isActive == true) return
+        
+        // Cancel any completed job before starting a new one
+        updateJob?.cancel()
+        updateJob =
+            viewLifecycleOwner.lifecycleScope.launch {
+                updateTask()
+                // Clear the job reference when the coroutine completes naturally
+                updateJob = null
+            }
+    }
+
+    /**
+     * Stops the update task coroutine if it's running.
+     */
+    private fun stopUpdateTask() {
+        updateJob?.cancel()
+        updateJob = null
     }
 
     /**
