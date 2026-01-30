@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">MaterialDialogs</string>
+    <string name="fragment_main">Dialog Examples</string>
+    <string name="fragment_alert">Alert Dialog</string>
+    <string name="fragment_simple">Simple Dialog</string>
+    <string name="fragment_confirmation">Confirmation Dialog</string>
+    <string name="alert_title">Alert Title</string>
+    <string name="simple_title">Simple Title</string>
+    <string name="confirmation_title">Confirmation Title</string>
+    <string name="alert_supporting_text">Do you want to perform this action?</string>
+    <string name="cancel">Cancel</string>
+    <string name="decline">Decline</string>
+    <string name="accept">Accept</string>
+    <string name="ok">OK</string>
+    <string name="snackbar_accepted">Accepted</string>
+    <string name="snackbar_cancelled">Cancelled</string>
+    <string name="snackbar_confirmed">Confirmed</string>
+    <string name="snackbar_declined">Declined</string>
+    <string-array name="simple_items">
+        <item>First Item</item>
+        <item>Second Item</item>
+        <item>Third Item</item>
+    </string-array>
+</resources>
