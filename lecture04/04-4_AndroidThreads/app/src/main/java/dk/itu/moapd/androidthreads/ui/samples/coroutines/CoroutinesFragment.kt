@@ -100,11 +100,6 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
             // Start/Stop button.
             startButton.setOnClickListener {
                 viewModel.status = !viewModel.status
-                if (viewModel.status) {
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        updateTask()
-                    }
-                }
                 updateButtons()
             }
 
@@ -112,12 +107,13 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
             updateButtons()
         }
 
-        // In the case of changing the device orientation.
+        // Use repeatOnLifecycle as the single source of truth for coroutine management.
+        // This continuously monitors the status and runs updateTask only when status is true,
+        // ensuring proper lifecycle handling and preventing duplicate coroutines during
+        // configuration changes like device rotation.
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                if (viewModel.status) {
-                    updateTask()
-                }
+                updateTask()
             }
         }
     }
@@ -140,11 +136,18 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
      * This method will be executed in an asynchronous Coroutine thread running in the background.
      */
     private suspend fun updateTask() {
+        // Keep collecting while the lifecycle is in STARTED state.
+        // The flow only emits when status is true.
         flow {
-            while (viewModel.status) {
-                emit(Unit)
-                delay(50)
-                Log.d(TAG, "`CoroutinesTask` cont is ${viewModel.cont.value}.")
+            while (true) {
+                if (viewModel.status) {
+                    emit(Unit)
+                    delay(50)
+                    Log.d(TAG, "`CoroutinesTask` cont is ${viewModel.cont.value}.")
+                } else {
+                    // Small delay when not active to avoid busy waiting
+                    delay(50)
+                }
             }
         }.collect {
             viewModel.increaseCont()
