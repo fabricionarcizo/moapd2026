@@ -57,7 +57,7 @@ class SimpleFragment : Fragment(R.layout.fragment_simple) {
             findNavController().navigate(R.id.show_fragment_main)
         }
 
-        val items = arrayOf("First Item", "Second Item", "Third Item")
+        val items = resources.getStringArray(R.array.simple_items)
 
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.simple_title))
