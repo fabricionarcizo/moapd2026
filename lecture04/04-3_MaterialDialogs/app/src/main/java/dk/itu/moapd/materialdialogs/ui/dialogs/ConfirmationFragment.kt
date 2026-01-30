@@ -20,6 +20,7 @@
  */
 package dk.itu.moapd.materialdialogs.ui.dialogs
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -35,6 +36,11 @@ import dk.itu.moapd.materialdialogs.ui.common.showSnackBar
  * by this project. You can use a bundle to share data between the main activity and this fragment.
  */
 class ConfirmationFragment : Fragment(R.layout.fragment_confirmation) {
+
+    /**
+     * The dialog instance to prevent memory leaks and duplicate dialogs.
+     */
+    private var dialog: Dialog? = null
     /**
      * Called immediately after `onCreateView(LayoutInflater, ViewGroup, Bundle)` has returned, but
      * before any saved state has been restored in to the view. This gives subclasses a chance to
@@ -52,30 +58,46 @@ class ConfirmationFragment : Fragment(R.layout.fragment_confirmation) {
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Define lambda function for showing the main fragment.
-        val showMainFragment = {
-            findNavController().navigate(R.id.show_fragment_main)
-        }
-
-        val singleItems = resources.getStringArray(R.array.simple_items)
-        val checkedItem = 1
-
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.confirmation_title))
-            .setCancelable(false)
-            .setNeutralButton(getString(R.string.cancel)) { _, _ ->
-                // TODO: Respond to neutral button press.
-                view.showSnackBar(getString(R.string.snackbar_cancelled))
-                showMainFragment()
-            }.setPositiveButton(getString(R.string.ok)) { _, _ ->
-                // TODO: Respond to positive button press.
-                view.showSnackBar(getString(R.string.snackbar_confirmed))
-                showMainFragment()
+        // Only show the dialog if it's the first creation (not a configuration change)
+        if (savedInstanceState == null) {
+            // Define lambda function for showing the main fragment.
+            val showMainFragment = {
+                findNavController().navigate(R.id.show_fragment_main)
             }
-            // Single-choice items (initialized with checked item)
-            .setSingleChoiceItems(singleItems, checkedItem) { _, which ->
-                // TODO: Respond to item chosen.
-                view.showSnackBar(singleItems[which])
-            }.show()
+
+            val singleItems = resources.getStringArray(R.array.simple_items)
+            val checkedItem = 1
+
+            dialog = MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.confirmation_title))
+                .setCancelable(false)
+                .setNeutralButton(getString(R.string.cancel)) { _, _ ->
+                    // TODO: Respond to neutral button press.
+                    view.showSnackBar(getString(R.string.snackbar_cancelled))
+                    showMainFragment()
+                }.setPositiveButton(getString(R.string.ok)) { _, _ ->
+                    // TODO: Respond to positive button press.
+                    view.showSnackBar(getString(R.string.snackbar_confirmed))
+                    showMainFragment()
+                }
+                // Single-choice items (initialized with checked item)
+                .setSingleChoiceItems(singleItems, checkedItem) { _, which ->
+                    // TODO: Respond to item chosen.
+                    view.showSnackBar(singleItems[which])
+                }.show()
+        }
+    }
+
+    /**
+     * Called when the view previously created by `onCreateView()` has been detached from the
+     * fragment. The next time the fragment needs to be displayed, a new view will be created.
+     * This is called after `onStop()` and before `onDestroy()`. It is called regardless of
+     * whether `onCreateView()` returned a non-null view. Internally it is called after the view's
+     * state has been saved but before it has been removed from its parent.
+     */
+    override fun onDestroyView() {
+        super.onDestroyView()
+        dialog?.dismiss()
+        dialog = null
     }
 }

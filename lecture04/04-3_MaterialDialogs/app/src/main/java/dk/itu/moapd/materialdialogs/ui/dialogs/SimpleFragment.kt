@@ -20,6 +20,7 @@
  */
 package dk.itu.moapd.materialdialogs.ui.dialogs
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -35,6 +36,11 @@ import dk.itu.moapd.materialdialogs.ui.common.showSnackBar
  * by this project. You can use a bundle to share data between the main activity and this fragment.
  */
 class SimpleFragment : Fragment(R.layout.fragment_simple) {
+
+    /**
+     * The dialog instance to prevent memory leaks and duplicate dialogs.
+     */
+    private var dialog: Dialog? = null
     /**
      * Called immediately after `onCreateView(LayoutInflater, ViewGroup, Bundle)` has returned, but
      * before any saved state has been restored in to the view. This gives subclasses a chance to
@@ -52,20 +58,36 @@ class SimpleFragment : Fragment(R.layout.fragment_simple) {
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Define lambda function for showing the main fragment.
-        val showMainFragment = {
-            findNavController().navigate(R.id.show_fragment_main)
+        // Only show the dialog if it's the first creation (not a configuration change)
+        if (savedInstanceState == null) {
+            // Define lambda function for showing the main fragment.
+            val showMainFragment = {
+                findNavController().navigate(R.id.show_fragment_main)
+            }
+
+            val items = resources.getStringArray(R.array.simple_items)
+
+            dialog = MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.simple_title))
+                .setCancelable(false)
+                .setItems(items) { _, which ->
+                    // TODO: Respond to item chosen.
+                    view.showSnackBar(items[which])
+                    showMainFragment()
+                }.show()
         }
+    }
 
-        val items = resources.getStringArray(R.array.simple_items)
-
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.simple_title))
-            .setCancelable(false)
-            .setItems(items) { _, which ->
-                // TODO: Respond to item chosen.
-                view.showSnackBar(items[which])
-                showMainFragment()
-            }.show()
+    /**
+     * Called when the view previously created by `onCreateView()` has been detached from the
+     * fragment. The next time the fragment needs to be displayed, a new view will be created.
+     * This is called after `onStop()` and before `onDestroy()`. It is called regardless of
+     * whether `onCreateView()` returned a non-null view. Internally it is called after the view's
+     * state has been saved but before it has been removed from its parent.
+     */
+    override fun onDestroyView() {
+        super.onDestroyView()
+        dialog?.dismiss()
+        dialog = null
     }
 }
