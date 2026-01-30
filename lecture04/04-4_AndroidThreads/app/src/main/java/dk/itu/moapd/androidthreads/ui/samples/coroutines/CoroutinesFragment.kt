@@ -154,7 +154,7 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
     private fun startUpdateTask() {
         // Only start if not already active
         if (updateJob?.isActive == true) return
-        
+
         // Cancel any completed job before starting a new one
         updateJob?.cancel()
         updateJob =
