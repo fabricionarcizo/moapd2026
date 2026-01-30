@@ -58,11 +58,13 @@ class AlertFragment : Fragment(R.layout.fragment_alert) {
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Only show the dialog if it's the first creation (not a configuration change)
-        if (savedInstanceState == null) {
+        // Only show the dialog if it hasn't been shown yet and this is the first creation
+        if (savedInstanceState == null && dialog == null) {
             // Define lambda function for showing the main fragment.
             val showMainFragment = {
-                findNavController().navigate(R.id.show_fragment_main)
+                if (view.isAttachedToWindow) {
+                    findNavController().navigate(R.id.show_fragment_main)
+                }
             }
 
             // Show the `AlertDialog`.
@@ -72,15 +74,21 @@ class AlertFragment : Fragment(R.layout.fragment_alert) {
                 .setCancelable(false)
                 .setNeutralButton(getString(R.string.cancel)) { _, _ ->
                     // TODO: Respond to neutral button press.
-                    view.showSnackBar(getString(R.string.snackbar_cancelled))
+                    if (view.isAttachedToWindow) {
+                        view.showSnackBar(getString(R.string.snackbar_cancelled))
+                    }
                     showMainFragment()
                 }.setNegativeButton(getString(R.string.decline)) { _, _ ->
                     // TODO: Respond to negative button press.
-                    view.showSnackBar(getString(R.string.snackbar_declined))
+                    if (view.isAttachedToWindow) {
+                        view.showSnackBar(getString(R.string.snackbar_declined))
+                    }
                     showMainFragment()
                 }.setPositiveButton(getString(R.string.accept)) { _, _ ->
                     // TODO: Respond to positive button press.
-                    view.showSnackBar(getString(R.string.snackbar_accepted))
+                    if (view.isAttachedToWindow) {
+                        view.showSnackBar(getString(R.string.snackbar_accepted))
+                    }
                     showMainFragment()
                 }.show()
         }
@@ -95,7 +103,10 @@ class AlertFragment : Fragment(R.layout.fragment_alert) {
      */
     override fun onDestroyView() {
         super.onDestroyView()
-        dialog?.dismiss()
-        dialog = null
+        // Only dismiss and clean up if the fragment is actually being destroyed (not just a config change)
+        if (!requireActivity().isChangingConfigurations) {
+            dialog?.dismiss()
+            dialog = null
+        }
     }
 }

@@ -58,11 +58,13 @@ class SimpleFragment : Fragment(R.layout.fragment_simple) {
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Only show the dialog if it's the first creation (not a configuration change)
-        if (savedInstanceState == null) {
+        // Only show the dialog if it hasn't been shown yet and this is the first creation
+        if (savedInstanceState == null && dialog == null) {
             // Define lambda function for showing the main fragment.
             val showMainFragment = {
-                findNavController().navigate(R.id.show_fragment_main)
+                if (view.isAttachedToWindow) {
+                    findNavController().navigate(R.id.show_fragment_main)
+                }
             }
 
             val items = resources.getStringArray(R.array.simple_items)
@@ -72,7 +74,9 @@ class SimpleFragment : Fragment(R.layout.fragment_simple) {
                 .setCancelable(false)
                 .setItems(items) { _, which ->
                     // TODO: Respond to item chosen.
-                    view.showSnackBar(items[which])
+                    if (view.isAttachedToWindow) {
+                        view.showSnackBar(items[which])
+                    }
                     showMainFragment()
                 }.show()
         }
@@ -87,7 +91,10 @@ class SimpleFragment : Fragment(R.layout.fragment_simple) {
      */
     override fun onDestroyView() {
         super.onDestroyView()
-        dialog?.dismiss()
-        dialog = null
+        // Only dismiss and clean up if the fragment is actually being destroyed (not just a config change)
+        if (!requireActivity().isChangingConfigurations) {
+            dialog?.dismiss()
+            dialog = null
+        }
     }
 }
