@@ -21,16 +21,16 @@
 package dk.itu.moapd.androidthreads.ui.samples.thread
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.viewModelScope
 import dk.itu.moapd.androidthreads.R
 import dk.itu.moapd.androidthreads.databinding.FragmentThreadBinding
 import dk.itu.moapd.androidthreads.ui.shared.DataViewModel
 import dk.itu.moapd.androidthreads.ui.utils.viewBinding
-import kotlinx.coroutines.launch
 import kotlin.getValue
 
 /**
@@ -69,6 +69,11 @@ class ThreadFragment : Fragment(R.layout.fragment_thread) {
      * Reference to the currently running thread to enable proper cleanup.
      */
     private var workerThread: Thread? = null
+
+    /**
+     * Handler for posting updates to the main thread. Created once to avoid memory pressure.
+     */
+    private val handler = Handler(Looper.getMainLooper())
 
     /**
      * Called immediately after `onCreateView(LayoutInflater, ViewGroup, Bundle)` has returned, but
@@ -136,7 +141,9 @@ class ThreadFragment : Fragment(R.layout.fragment_thread) {
      */
     override fun onDestroyView() {
         super.onDestroyView()
-        // Interrupt and clean up the running thread to prevent thread leaks
+        // Remove all pending messages and callbacks first to prevent memory leaks and crashes
+        handler.removeCallbacksAndMessages(null)
+        // Then interrupt and clean up the running thread to prevent thread leaks
         workerThread?.interrupt()
         workerThread = null
     }
@@ -179,10 +186,8 @@ class ThreadFragment : Fragment(R.layout.fragment_thread) {
                     return
                 }
 
-                // Updates the `cont` attribute.
-                viewModel.viewModelScope.launch {
-                    viewModel.increaseCont()
-                }
+                // Send a post to update the progress bar in the UI thread.
+                handler.post(viewModel::increaseCont)
             }
         }
     }
