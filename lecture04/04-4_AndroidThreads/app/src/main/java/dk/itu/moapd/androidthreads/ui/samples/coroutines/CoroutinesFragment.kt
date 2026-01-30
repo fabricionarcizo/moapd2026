@@ -26,6 +26,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dk.itu.moapd.androidthreads.R
@@ -99,26 +100,21 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
 
             // Start/Stop button.
             startButton.setOnClickListener {
-                viewModel.status = !viewModel.status
-                updateButtons()
+                viewModel.toggleStatus()
             }
 
             // The initial value of the button status.
-            updateButtons()
+            viewModel.status.observe(viewLifecycleOwner) { updateButtons() }
         }
 
-        // Launch a single lifecycle-aware coroutine that monitors status changes.
+        // Observe status changes and manage coroutine lifecycle.
         // This ensures only one coroutine is active, even after configuration changes.
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Continuously monitor status and run the update task when status is true.
-                // This loop allows the task to react to status changes throughout the lifecycle.
-                while (true) {
-                    if (viewModel.status) {
+                // Observe status LiveData and launch task when status is true.
+                viewModel.status.asFlow().collect { isRunning ->
+                    if (isRunning) {
                         updateTask()
-                    } else {
-                        // Wait a bit before checking status again to avoid busy-waiting
-                        delay(50)
                     }
                 }
             }
@@ -132,11 +128,11 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
         // Update the start button text using a lambda expression.
         binding.startButton.text =
             getString(
-                if (viewModel.status) R.string.stop_button else R.string.start_button,
+                if (viewModel.status.value == true) R.string.stop_button else R.string.start_button,
             )
 
         // Update the reset button enabled state using a higher-order function.
-        binding.resetButton.isEnabled = viewModel.status
+        binding.resetButton.isEnabled = viewModel.status.value == true
     }
 
     /**
@@ -144,7 +140,7 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
      */
     private suspend fun updateTask() {
         flow {
-            while (viewModel.status) {
+            while (viewModel.status.value == true) {
                 emit(Unit)
                 delay(50)
                 Log.d(TAG, "`CoroutinesTask` cont is ${viewModel.cont.value}.")

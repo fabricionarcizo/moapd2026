@@ -100,22 +100,21 @@ class HandlerFragment : Fragment(R.layout.fragment_handler) {
 
             // Start/Stop button.
             startButton.setOnClickListener {
-                if (viewModel.status) {
-                    // Stop: interrupt thread first, then update status
+                if (viewModel.status.value == true) {
+                    // Stop: interrupt thread first, then clean up
                     handlerThread?.interrupt()
                     handlerThread = null
-                    viewModel.status = false
+                    viewModel.toggleStatus()
                 } else {
                     // Start: create and start new thread
-                    viewModel.status = true
+                    viewModel.toggleStatus()
                     handlerThread = Thread(HandlerTask())
                     handlerThread?.start()
                 }
-                updateButtons()
             }
 
-            // The initial value of the button status.
-            updateButtons()
+            // Observe status changes to update buttons.
+            viewModel.status.observe(viewLifecycleOwner) { updateButtons() }
 
             // Set an observer to check when the `cont` variable in updated in the `ViewModel`.
             viewModel.cont.observe(viewLifecycleOwner) { value ->
@@ -124,7 +123,7 @@ class HandlerFragment : Fragment(R.layout.fragment_handler) {
         }
 
         // In the case of changing the device orientation.
-        if (viewModel.status) {
+        if (viewModel.status.value == true) {
             // Clean up any existing thread before creating a new one
             handlerThread?.interrupt()
             handlerThread = Thread(HandlerTask())
@@ -155,11 +154,11 @@ class HandlerFragment : Fragment(R.layout.fragment_handler) {
         // Update the start button text using a lambda expression.
         binding.startButton.text =
             getString(
-                if (viewModel.status) R.string.stop_button else R.string.start_button,
+                if (viewModel.status.value == true) R.string.stop_button else R.string.start_button,
             )
 
         // Update the reset button enabled state using a higher-order function.
-        binding.resetButton.isEnabled = viewModel.status
+        binding.resetButton.isEnabled = viewModel.status.value == true
     }
 
     /**
@@ -175,7 +174,7 @@ class HandlerFragment : Fragment(R.layout.fragment_handler) {
          */
         override fun run() {
             // Run this block until the user presses the stop button or the thread is interrupted.
-            while (viewModel.status && !Thread.currentThread().isInterrupted) {
+            while (viewModel.status.value == true && !Thread.currentThread().isInterrupted) {
                 // Stops the worker thread for 250 milliseconds.
                 try {
                     Thread.sleep(250)

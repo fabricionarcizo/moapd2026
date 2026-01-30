@@ -49,9 +49,22 @@ class DataViewModel(
     /**
      * A flag to control the start/stop button in the application.
      */
-    var status: Boolean
-        get() = savedStateHandle.get<Boolean>(STATUS_KEY) ?: false
-        set(value) = savedStateHandle.set(STATUS_KEY, value)
+    private val _status: MutableLiveData<Boolean> by lazy {
+        savedStateHandle.getLiveData(STATUS_KEY, false)
+    }
+
+    /**
+     * A LiveData which publicly exposes any update in the status variable.
+     */
+    val status: LiveData<Boolean>
+        get() = _status
+
+    /**
+     * Toggles the status between true and false.
+     */
+    fun toggleStatus() {
+        _status.value = !(_status.value ?: false)
+    }
 
     /**
      * A LiveData which publicly exposes any update in the cont variable.
