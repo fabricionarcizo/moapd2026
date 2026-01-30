@@ -20,6 +20,7 @@
  */
 package dk.itu.moapd.materialdialogs.ui.dialogs
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -35,6 +36,11 @@ import dk.itu.moapd.materialdialogs.ui.common.showSnackBar
  * by this project. You can use a bundle to share data between the main activity and this fragment.
  */
 class AlertFragment : Fragment(R.layout.fragment_alert) {
+
+    /**
+     * The dialog instance to prevent memory leaks and duplicate dialogs.
+     */
+    private var dialog: Dialog? = null
     /**
      * Called immediately after `onCreateView(LayoutInflater, ViewGroup, Bundle)` has returned, but
      * before any saved state has been restored in to the view. This gives subclasses a chance to
@@ -52,28 +58,46 @@ class AlertFragment : Fragment(R.layout.fragment_alert) {
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Define lambda function for showing the main fragment.
-        val showMainFragment = {
-            findNavController().navigate(R.id.show_fragment_main)
-        }
+        // Only show the dialog if this is the first creation (not a configuration change)
+        // to avoid showing duplicate dialogs.
+        if (savedInstanceState == null) {
+            // Define lambda function for showing the main fragment.
+            val showMainFragment = {
+                findNavController().navigate(R.id.show_fragment_main)
+            }
 
-        // Show the `AlertDialog`.
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.alert_title))
-            .setMessage(getString(R.string.alert_supporting_text))
-            .setCancelable(false)
-            .setNeutralButton(getString(R.string.cancel)) { _, _ ->
-                // TODO: Respond to neutral button press.
-                view.showSnackBar(getString(R.string.snackbar_cancelled))
-                showMainFragment()
-            }.setNegativeButton(getString(R.string.decline)) { _, _ ->
-                // TODO: Respond to negative button press.
-                view.showSnackBar(getString(R.string.snackbar_declined))
-                showMainFragment()
-            }.setPositiveButton(getString(R.string.accept)) { _, _ ->
-                // TODO: Respond to positive button press.
-                view.showSnackBar(getString(R.string.snackbar_accepted))
-                showMainFragment()
-            }.show()
+            // Show the `AlertDialog`.
+            dialog = MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.alert_title))
+                .setMessage(getString(R.string.alert_supporting_text))
+                .setCancelable(false)
+                .setNeutralButton(getString(R.string.cancel)) { _, _ ->
+                    // TODO: Respond to neutral button press.
+                    view.showSnackBar(getString(R.string.snackbar_cancelled))
+                    showMainFragment()
+                }.setNegativeButton(getString(R.string.decline)) { _, _ ->
+                    // TODO: Respond to negative button press.
+                    view.showSnackBar(getString(R.string.snackbar_declined))
+                    showMainFragment()
+                }.setPositiveButton(getString(R.string.accept)) { _, _ ->
+                    // TODO: Respond to positive button press.
+                    view.showSnackBar(getString(R.string.snackbar_accepted))
+                    showMainFragment()
+                }.show()
+        }
+    }
+
+    /**
+     * Called when the view previously created by `onCreateView()` has been detached from the
+     * fragment. The next time the fragment needs to be displayed, a new view will be created.
+     * This is called after `onStop()` and before `onDestroy()`. It is called regardless of
+     * whether `onCreateView()` returned a non-null view. Internally it is called after the view's
+     * state has been saved but before it has been removed from its parent.
+     */
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // Dismiss the dialog to prevent memory leaks.
+        dialog?.dismiss()
+        dialog = null
     }
 }
