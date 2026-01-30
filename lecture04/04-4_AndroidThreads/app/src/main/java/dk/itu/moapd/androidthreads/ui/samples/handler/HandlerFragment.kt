@@ -71,6 +71,11 @@ class HandlerFragment : Fragment(R.layout.fragment_handler) {
     private var handlerThread: Thread? = null
 
     /**
+     * Handler for posting updates to the main thread. Created once to avoid memory pressure.
+     */
+    private val handler = Handler(Looper.getMainLooper())
+
+    /**
      * Called immediately after `onCreateView(LayoutInflater, ViewGroup, Bundle)` has returned, but
      * before any saved state has been restored in to the view.  This gives subclasses a chance to
      * initialize themselves once they know their view hierarchy has been completely created.  The
@@ -136,7 +141,9 @@ class HandlerFragment : Fragment(R.layout.fragment_handler) {
      */
     override fun onDestroyView() {
         super.onDestroyView()
-        // Interrupt and clean up the running thread to prevent thread leaks
+        // Remove all pending messages and callbacks first to prevent memory leaks and crashes
+        handler.removeCallbacksAndMessages(null)
+        // Then interrupt and clean up the running thread to prevent thread leaks
         handlerThread?.interrupt()
         handlerThread = null
     }
@@ -180,7 +187,7 @@ class HandlerFragment : Fragment(R.layout.fragment_handler) {
                 }
 
                 // Send a post to update the progress bar in the UI thread.
-                Handler(Looper.getMainLooper()).post(viewModel::increaseCont)
+                handler.post(viewModel::increaseCont)
             }
         }
     }
