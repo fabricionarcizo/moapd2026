@@ -22,6 +22,10 @@ package dk.itu.moapd.listview.ui.main
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import com.github.javafaker.Faker
 import dk.itu.moapd.listview.R
@@ -86,6 +90,14 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 data = data,
             )
         binding.listView.adapter = adapter
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.listView) { view, insets ->
+            val navBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = navBarHeight
+            }
+            insets
+        }
     }
 
     /**
