@@ -57,7 +57,7 @@ class ConfirmationFragment : Fragment(R.layout.fragment_confirmation) {
             findNavController().navigate(R.id.show_fragment_main)
         }
 
-        val singleItems = arrayOf("First Item", "Second Item", "Third Item")
+        val singleItems = resources.getStringArray(R.array.simple_items)
         val checkedItem = 1
 
         MaterialAlertDialogBuilder(requireContext())
@@ -65,11 +65,11 @@ class ConfirmationFragment : Fragment(R.layout.fragment_confirmation) {
             .setCancelable(false)
             .setNeutralButton(getString(R.string.cancel)) { _, _ ->
                 // TODO: Respond to neutral button press.
-                view.showSnackBar("Cancelled")
+                view.showSnackBar(getString(R.string.snackbar_cancelled))
                 showMainFragment()
             }.setPositiveButton(getString(R.string.ok)) { _, _ ->
                 // TODO: Respond to positive button press.
-                view.showSnackBar("Confirmed")
+                view.showSnackBar(getString(R.string.snackbar_confirmed))
                 showMainFragment()
             }
             // Single-choice items (initialized with checked item)
