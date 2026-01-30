@@ -111,9 +111,16 @@ class CoroutinesFragment : Fragment(R.layout.fragment_coroutines) {
         // This ensures only one coroutine is active, even after configuration changes.
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Continuously run the update task.
-                // The task itself will only execute when viewModel.status is true.
-                updateTask()
+                // Continuously monitor status and run the update task when status is true.
+                // This loop allows the task to react to status changes throughout the lifecycle.
+                while (true) {
+                    if (viewModel.status) {
+                        updateTask()
+                    } else {
+                        // Wait a bit before checking status again to avoid busy-waiting
+                        delay(50)
+                    }
+                }
             }
         }
     }
