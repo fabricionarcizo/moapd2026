@@ -71,7 +71,7 @@ class ThreadFragment : Fragment(R.layout.fragment_thread) {
     private var workerThread: Thread? = null
 
     /**
-     * Handler for posting updates to the main thread. Created once to avoid memory pressure.
+     * Handler for posting updates to the main thread using the main looper.
      */
     private val handler = Handler(Looper.getMainLooper())
 
@@ -186,7 +186,7 @@ class ThreadFragment : Fragment(R.layout.fragment_thread) {
                     return
                 }
 
-                // Send a post to update the progress bar in the UI thread.
+                // Update the progress counter on the main thread.
                 handler.post(viewModel::increaseCont)
             }
         }
