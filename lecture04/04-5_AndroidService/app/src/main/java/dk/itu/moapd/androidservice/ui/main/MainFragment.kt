@@ -24,6 +24,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -143,7 +144,12 @@ class MainFragment : Fragment(R.layout.fragment_main) {
      * Starts the audio playback service.
      */
     private fun startAudioService() {
-        requireContext().startService(createAudioServiceIntent())
+        val serviceIntent = createAudioServiceIntent()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            requireContext().startForegroundService(serviceIntent)
+        } else {
+            requireContext().startService(serviceIntent)
+        }
         viewModel.setServiceRunning(true)
     }
 

@@ -20,15 +20,23 @@
  */
 package dk.itu.moapd.androidservice.service
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import dk.itu.moapd.androidservice.R
+import dk.itu.moapd.androidservice.ui.main.MainActivity
 
 /**
- * Started service that plays a ringtone in the background.
+ * Foreground service that plays a ringtone in the background.
+ * Uses a foreground notification to comply with Android's background execution limits.
  */
 class AudioPlaybackService : Service() {
     /**
@@ -39,6 +47,16 @@ class AudioPlaybackService : Service() {
          * Tag used for logging purposes.
          */
         private val TAG = AudioPlaybackService::class.qualifiedName
+
+        /**
+         * Notification channel ID for the foreground service.
+         */
+        private const val CHANNEL_ID = "audio_playback_channel"
+
+        /**
+         * Notification ID for the foreground service.
+         */
+        private const val NOTIFICATION_ID = 1
 
         /**
          * Indicates whether the service is running.
@@ -68,6 +86,7 @@ class AudioPlaybackService : Service() {
     override fun onCreate() {
         super.onCreate()
         isRunning = true
+        createNotificationChannel()
         Log.d(TAG, "onCreate()")
     }
 
@@ -101,6 +120,9 @@ class AudioPlaybackService : Service() {
         flags: Int,
         startId: Int,
     ): Int {
+        // Start the service as a foreground service with a notification
+        startForeground(NOTIFICATION_ID, createNotification())
+
         // Start playing the default ringtone audio.
         if (mediaPlayer == null) {
             try {
@@ -183,4 +205,44 @@ class AudioPlaybackService : Service() {
         super.onDestroy()
         Log.d(TAG, "onDestroy()")
     }
+
+    /**
+     * Creates a notification channel for the foreground service.
+     * This is required for Android O (API 26) and above.
+     */
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel =
+                NotificationChannel(
+                    CHANNEL_ID,
+                    getString(R.string.notification_channel_name),
+                    NotificationManager.IMPORTANCE_LOW,
+                ).apply {
+                    description = getString(R.string.notification_channel_description)
+                }
+
+            val notificationManager = getSystemService(NotificationManager::class.java)
+            notificationManager?.createNotificationChannel(channel)
+        }
+    }
+
+    /**
+     * Creates a notification for the foreground service.
+     *
+     * @return The notification to be displayed while the service is running.
+     */
+    private fun createNotification() =
+        NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle(getString(R.string.notification_title))
+            .setContentText(getString(R.string.notification_text))
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentIntent(
+                PendingIntent.getActivity(
+                    this,
+                    0,
+                    Intent(this, MainActivity::class.java),
+                    PendingIntent.FLAG_IMMUTABLE,
+                ),
+            )
+            .build()
 }
