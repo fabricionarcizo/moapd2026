@@ -23,7 +23,7 @@ package dk.itu.moapd.fragments.ui.albums
 import androidx.fragment.app.Fragment
 import dk.itu.moapd.fragments.R
 import dk.itu.moapd.fragments.databinding.FragmentAlbumsBinding
-import dk.itu.moapd.fragments.utils.viewBinding
+import dk.itu.moapd.fragments.ui.utils.viewBinding
 
 /**
  * A fragment to display a list of artists' photos. In practice, we are not going to design the UI

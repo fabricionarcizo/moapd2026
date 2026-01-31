@@ -23,7 +23,7 @@ package dk.itu.moapd.viewpager.ui.pages.articles
 import androidx.fragment.app.Fragment
 import dk.itu.moapd.viewpager.R
 import dk.itu.moapd.viewpager.databinding.FragmentArticlesBinding
-import dk.itu.moapd.viewpager.utils.viewBinding
+import dk.itu.moapd.viewpager.ui.utils.viewBinding
 
 /**
  * A fragment to display an example of an article. In practice, we are not going to design the UI

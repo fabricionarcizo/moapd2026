@@ -2,6 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>NewLineAtEndOfFile:FragmentViewBindingDelegate.kt:dk.itu.moapd.listview.utils.FragmentViewBindingDelegate.kt</ID>
+    <ID>NewLineAtEndOfFile:FragmentViewBindingDelegate.kt:dk.itu.moapd.listview.ui.utils.FragmentViewBindingDelegate.kt</ID>
   </CurrentIssues>
 </SmellBaseline>

@@ -33,7 +33,7 @@ import dk.itu.moapd.recyclerview.R
 import dk.itu.moapd.recyclerview.databinding.FragmentMainBinding
 import dk.itu.moapd.recyclerview.domain.model.DummyModel
 import dk.itu.moapd.recyclerview.ui.list.CustomAdapter
-import dk.itu.moapd.recyclerview.utils.viewBinding
+import dk.itu.moapd.recyclerview.ui.utils.viewBinding
 import java.util.Random
 
 /**
