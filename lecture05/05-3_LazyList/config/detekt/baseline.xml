@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>FunctionNaming:LazyListScreen.kt:@Composable @OptIn(ExperimentalMaterial3Api::class) private fun TopBar</ID>
+    <ID>FunctionNaming:LazyListScreen.kt:@Composable fun LazyListScreen</ID>
+    <ID>FunctionNaming:LazyListScreen.kt:@Composable private fun BottomBar</ID>
+    <ID>FunctionNaming:RowItem.kt:@Composable fun RowItem</ID>
+    <ID>FunctionNaming:RowItem.kt:@Composable private fun DummyButtons</ID>
+    <ID>FunctionNaming:RowItem.kt:@Composable private fun DummyImage</ID>
+    <ID>FunctionNaming:RowItem.kt:@Composable private fun DummyText</ID>
+    <ID>FunctionNaming:Theme.kt:@Composable fun LazyListTheme</ID>
+    <ID>MagicNumber:Color.kt:0xFF625b71</ID>
+    <ID>MagicNumber:Color.kt:0xFF6650a4</ID>
+    <ID>MagicNumber:Color.kt:0xFF7D5260</ID>
+    <ID>MagicNumber:Color.kt:0xFFCCC2DC</ID>
+    <ID>MagicNumber:Color.kt:0xFFD0BCFF</ID>
+    <ID>MagicNumber:Color.kt:0xFFEFB8C8</ID>
+    <ID>NewLineAtEndOfFile:Color.kt:dk.itu.moapd.lazylist.ui.theme.Color.kt</ID>
+    <ID>NewLineAtEndOfFile:Theme.kt:dk.itu.moapd.lazylist.ui.theme.Theme.kt</ID>
+    <ID>NewLineAtEndOfFile:Type.kt:dk.itu.moapd.lazylist.ui.theme.Type.kt</ID>
+    <ID>WildcardImport:RowItem.kt:import androidx.compose.foundation.layout.*</ID>
+    <ID>WildcardImport:RowItem.kt:import androidx.compose.material3.*</ID>
+  </CurrentIssues>
+</SmellBaseline>
