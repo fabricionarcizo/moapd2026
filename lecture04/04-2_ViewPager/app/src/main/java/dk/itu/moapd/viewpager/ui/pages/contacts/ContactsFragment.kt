@@ -32,7 +32,7 @@ import com.google.android.material.color.MaterialColors
 import dk.itu.moapd.viewpager.R
 import dk.itu.moapd.viewpager.databinding.FragmentContactsBinding
 import dk.itu.moapd.viewpager.ui.common.dpToPx
-import dk.itu.moapd.viewpager.utils.viewBinding
+import dk.itu.moapd.viewpager.ui.utils.viewBinding
 import java.util.Random
 
 /**

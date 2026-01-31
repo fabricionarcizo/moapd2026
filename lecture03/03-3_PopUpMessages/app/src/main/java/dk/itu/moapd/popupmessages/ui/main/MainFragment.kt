@@ -28,7 +28,7 @@ import dk.itu.moapd.popupmessages.R
 import dk.itu.moapd.popupmessages.databinding.FragmentMainBinding
 import dk.itu.moapd.popupmessages.ui.common.showSnackBar
 import dk.itu.moapd.popupmessages.ui.common.showToast
-import dk.itu.moapd.popupmessages.utils.viewBinding
+import dk.itu.moapd.popupmessages.ui.utils.viewBinding
 import java.util.Random
 
 /**

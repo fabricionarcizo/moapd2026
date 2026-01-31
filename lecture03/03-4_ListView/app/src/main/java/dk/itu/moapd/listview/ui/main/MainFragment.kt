@@ -32,7 +32,7 @@ import dk.itu.moapd.listview.R
 import dk.itu.moapd.listview.databinding.FragmentMainBinding
 import dk.itu.moapd.listview.domain.model.DummyModel
 import dk.itu.moapd.listview.ui.list.CustomAdapter
-import dk.itu.moapd.listview.utils.viewBinding
+import dk.itu.moapd.listview.ui.utils.viewBinding
 import java.util.Random
 
 /**
