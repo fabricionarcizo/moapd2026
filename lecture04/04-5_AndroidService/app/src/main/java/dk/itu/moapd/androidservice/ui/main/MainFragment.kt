@@ -169,7 +169,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
      * Starts the audio playback service.
      */
     private fun startAudioService() {
-        // Check for notification permission on Android 13+
+        // Check for notification permission on Android 13+ (API 33)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             when {
                 ContextCompat.checkSelfPermission(
@@ -198,7 +198,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 }
             }
         } else {
-            // No permission needed for Android 12 and below
+            // No permission needed for Android 12 and below (API 32 and below)
             startAudioServiceInternal()
         }
     }

@@ -118,8 +118,8 @@ class AudioPlaybackService : Service() {
         try {
             startForeground(NOTIFICATION_ID, createNotification())
         } catch (e: Exception) {
-            // On Android 14+ (API 34), ForegroundServiceStartNotAllowedException can be thrown
-            // if permission is not granted or service can't be started in foreground
+            // On Android 14+ (API 34), exceptions can be thrown if permission is not granted
+            // or service can't be started in foreground
             Log.e(TAG, "Failed to start foreground service", e)
             stopSelf()
             return START_NOT_STICKY
