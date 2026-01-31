@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>FunctionNaming:GettingStartedScreen.kt:@Composable fun GettingStartedScreen</ID>
+    <ID>FunctionNaming:GettingStartedScreen.kt:@Composable private fun GreetingText</ID>
+    <ID>FunctionNaming:GettingStartedScreen.kt:@Composable private fun NameInput</ID>
+    <ID>FunctionNaming:GettingStartedScreen.kt:@Composable private fun SendButton</ID>
+    <ID>FunctionNaming:Theme.kt:@Composable fun GettingStartedTheme</ID>
+    <ID>MagicNumber:Color.kt:0xFF625b71</ID>
+    <ID>MagicNumber:Color.kt:0xFF6650a4</ID>
+    <ID>MagicNumber:Color.kt:0xFF7D5260</ID>
+    <ID>MagicNumber:Color.kt:0xFFCCC2DC</ID>
+    <ID>MagicNumber:Color.kt:0xFFD0BCFF</ID>
+    <ID>MagicNumber:Color.kt:0xFFEFB8C8</ID>
+    <ID>NewLineAtEndOfFile:Color.kt:dk.itu.moapd.gettingstarted.ui.theme.Color.kt</ID>
+    <ID>NewLineAtEndOfFile:Theme.kt:dk.itu.moapd.gettingstarted.ui.theme.Theme.kt</ID>
+    <ID>NewLineAtEndOfFile:Type.kt:dk.itu.moapd.gettingstarted.ui.theme.Type.kt</ID>
+  </CurrentIssues>
+</SmellBaseline>
