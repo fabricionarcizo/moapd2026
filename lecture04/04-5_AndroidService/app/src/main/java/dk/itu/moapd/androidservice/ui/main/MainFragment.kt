@@ -43,6 +43,13 @@ import dk.itu.moapd.androidservice.ui.utils.viewBinding
  * Main fragment with controls to start/stop a background service.
  */
 class MainFragment : Fragment(R.layout.fragment_main) {
+    companion object {
+        /**
+         * Permission required for posting notifications on Android 13+ (API 33).
+         */
+        private const val NOTIFICATION_PERMISSION = Manifest.permission.POST_NOTIFICATIONS
+    }
+
     /**
      * View binding is a feature that allows you to more easily write code that interacts with
      * views. Once view binding is enabled in a module, it generates a binding class for each XML
@@ -174,12 +181,12 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             when {
                 ContextCompat.checkSelfPermission(
                     requireContext(),
-                    Manifest.permission.POST_NOTIFICATIONS,
+                    NOTIFICATION_PERMISSION,
                 ) == PackageManager.PERMISSION_GRANTED -> {
                     // Permission is already granted
                     startAudioServiceInternal()
                 }
-                shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+                shouldShowRequestPermissionRationale(NOTIFICATION_PERMISSION) -> {
                     // Show rationale and request permission
                     view?.let {
                         Snackbar
@@ -188,13 +195,13 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                                 "Notification permission is needed to show service status",
                                 Snackbar.LENGTH_LONG,
                             ).setAction("Grant") {
-                                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                requestPermissionLauncher.launch(NOTIFICATION_PERMISSION)
                             }.show()
                     }
                 }
                 else -> {
                     // Request permission
-                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    requestPermissionLauncher.launch(NOTIFICATION_PERMISSION)
                 }
             }
         } else {

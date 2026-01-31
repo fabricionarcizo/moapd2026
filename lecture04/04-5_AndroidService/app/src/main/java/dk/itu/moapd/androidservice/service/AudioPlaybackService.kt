@@ -117,10 +117,15 @@ class AudioPlaybackService : Service() {
         // Start the service as a foreground service with a notification
         try {
             startForeground(NOTIFICATION_ID, createNotification())
-        } catch (e: Exception) {
-            // On Android 14+ (API 34), exceptions can be thrown if permission is not granted
-            // or service can't be started in foreground
-            Log.e(TAG, "Failed to start foreground service", e)
+        } catch (e: SecurityException) {
+            // SecurityException can be thrown if FOREGROUND_SERVICE_MEDIA_PLAYBACK permission
+            // is not granted or service restrictions apply (Android 12+ / API 31+)
+            Log.e(TAG, "Failed to start foreground service: SecurityException", e)
+            stopSelf()
+            return START_NOT_STICKY
+        } catch (e: IllegalStateException) {
+            // IllegalStateException can be thrown if the service is not in a valid state
+            Log.e(TAG, "Failed to start foreground service: IllegalStateException", e)
             stopSelf()
             return START_NOT_STICKY
         }
