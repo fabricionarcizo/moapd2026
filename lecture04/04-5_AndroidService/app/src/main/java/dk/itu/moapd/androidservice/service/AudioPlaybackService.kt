@@ -35,7 +35,26 @@ class AudioPlaybackService : Service() {
      * A set of private constants used in this class.
      */
     companion object {
+        /**
+         * Tag used for logging purposes.
+         */
         private val TAG = AudioPlaybackService::class.qualifiedName
+
+        /**
+         * Indicates whether the service is running.
+         */
+        var isRunning = false
+            private set
+
+        /**
+         * Action broadcast when the service starts.
+         */
+        const val ACTION_SERVICE_STARTED = "dk.itu.moapd.androidservice.SERVICE_STARTED"
+
+        /**
+         * Action broadcast when the service stops.
+         */
+        const val ACTION_SERVICE_STOPPED = "dk.itu.moapd.androidservice.SERVICE_STOPPED"
     }
 
     /**
@@ -48,6 +67,7 @@ class AudioPlaybackService : Service() {
      */
     override fun onCreate() {
         super.onCreate()
+        isRunning = true
         Log.d(TAG, "onCreate()")
     }
 
@@ -92,6 +112,13 @@ class AudioPlaybackService : Service() {
                         start()
                     }
                 Log.d(TAG, "onStartCommand()")
+
+                // Send broadcast that service has started
+                sendBroadcast(
+                    Intent(ACTION_SERVICE_STARTED).apply {
+                        setPackage(packageName)
+                    },
+                )
             } catch (e: java.io.IOException) {
                 Log.e(TAG, "Failed to access the ringtone file", e)
                 cleanupMediaPlayer()
@@ -144,6 +171,15 @@ class AudioPlaybackService : Service() {
             release()
         }
         mediaPlayer = null
+
+        // Send broadcast that service has stopped
+        sendBroadcast(
+            Intent(ACTION_SERVICE_STOPPED).apply {
+                setPackage(packageName)
+            },
+        )
+
+        isRunning = false
         super.onDestroy()
         Log.d(TAG, "onDestroy()")
     }
