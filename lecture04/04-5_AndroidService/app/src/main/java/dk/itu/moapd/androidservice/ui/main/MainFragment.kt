@@ -205,7 +205,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 }
             }
         } else {
-            // No permission needed for Android 12 and below (API 32 and below)
+            // No permission needed for Android 12L and below (API 32 and below)
             startAudioServiceInternal()
         }
     }

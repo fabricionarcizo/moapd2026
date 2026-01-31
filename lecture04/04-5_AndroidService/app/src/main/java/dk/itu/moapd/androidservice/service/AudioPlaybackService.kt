@@ -124,7 +124,8 @@ class AudioPlaybackService : Service() {
             stopSelf()
             return START_NOT_STICKY
         } catch (e: IllegalStateException) {
-            // IllegalStateException can be thrown if the service is not in a valid state
+            // IllegalStateException thrown when startForeground() is called after onStartCommand()
+            // returns or when app is in background on Android 12+ without proper permissions
             Log.e(TAG, "Failed to start foreground service: IllegalStateException", e)
             stopSelf()
             return START_NOT_STICKY
