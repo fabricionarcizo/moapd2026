@@ -21,7 +21,7 @@
 package dk.itu.moapd.lazylist.domain.model
 
 /**
- * An model class with all parameters to represent a dummy object in the Lazy Composable
+ * A model class with all parameters to represent a dummy object in the Lazy Composable
  * application.
  *
  * @property cityName The name of the city.
