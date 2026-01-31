@@ -20,7 +20,6 @@
  */
 package dk.itu.moapd.androidservice.service
 
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
@@ -32,6 +31,7 @@ import android.provider.Settings
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import dk.itu.moapd.androidservice.R
+import dk.itu.moapd.androidservice.app.ServiceDemoApplication
 import dk.itu.moapd.androidservice.ui.main.MainActivity
 
 /**
@@ -47,11 +47,6 @@ class AudioPlaybackService : Service() {
          * Tag used for logging purposes.
          */
         private val TAG = AudioPlaybackService::class.qualifiedName
-
-        /**
-         * Notification channel ID for the foreground service.
-         */
-        private const val CHANNEL_ID = "audio_playback_channel"
 
         /**
          * Notification ID for the foreground service.
@@ -86,7 +81,6 @@ class AudioPlaybackService : Service() {
     override fun onCreate() {
         super.onCreate()
         isRunning = true
-        createNotificationChannel()
         Log.d(TAG, "onCreate()")
     }
 
@@ -121,7 +115,15 @@ class AudioPlaybackService : Service() {
         startId: Int,
     ): Int {
         // Start the service as a foreground service with a notification
-        startForeground(NOTIFICATION_ID, createNotification())
+        try {
+            startForeground(NOTIFICATION_ID, createNotification())
+        } catch (e: Exception) {
+            // On Android 14+ (API 34), ForegroundServiceStartNotAllowedException can be thrown
+            // if permission is not granted or service can't be started in foreground
+            Log.e(TAG, "Failed to start foreground service", e)
+            stopSelf()
+            return START_NOT_STICKY
+        }
 
         // Start playing the default ringtone audio.
         if (mediaPlayer == null) {
@@ -207,32 +209,12 @@ class AudioPlaybackService : Service() {
     }
 
     /**
-     * Creates a notification channel for the foreground service.
-     * This is required for Android O (API 26) and above.
-     */
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel =
-                NotificationChannel(
-                    CHANNEL_ID,
-                    getString(R.string.notification_channel_name),
-                    NotificationManager.IMPORTANCE_LOW,
-                ).apply {
-                    description = getString(R.string.notification_channel_description)
-                }
-
-            val notificationManager = getSystemService(NotificationManager::class.java)
-            notificationManager?.createNotificationChannel(channel)
-        }
-    }
-
-    /**
      * Creates a notification for the foreground service.
      *
      * @return The notification to be displayed while the service is running.
      */
     private fun createNotification() =
-        NotificationCompat.Builder(this, CHANNEL_ID)
+        NotificationCompat.Builder(this, ServiceDemoApplication.AUDIO_CHANNEL_ID)
             .setContentTitle(getString(R.string.notification_title))
             .setContentText(getString(R.string.notification_text))
             .setSmallIcon(R.drawable.ic_launcher_foreground)

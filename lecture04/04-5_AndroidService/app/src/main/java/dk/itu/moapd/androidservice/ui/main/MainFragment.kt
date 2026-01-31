@@ -20,16 +20,20 @@
  */
 package dk.itu.moapd.androidservice.ui.main
 
+import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.google.android.material.snackbar.Snackbar
 import dk.itu.moapd.androidservice.R
 import dk.itu.moapd.androidservice.databinding.FragmentMainBinding
 import dk.itu.moapd.androidservice.service.AudioPlaybackService
@@ -51,6 +55,27 @@ class MainFragment : Fragment(R.layout.fragment_main) {
      * ViewModel for managing service state that survives configuration changes.
      */
     private val viewModel: MainViewModel by viewModels()
+
+    /**
+     * ActivityResultLauncher for requesting POST_NOTIFICATIONS permission on Android 13+.
+     */
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                // Permission granted, start the service
+                startAudioServiceInternal()
+            } else {
+                // Permission denied, show a message
+                view?.let {
+                    Snackbar
+                        .make(
+                            it,
+                            "Notification permission is required to run the service",
+                            Snackbar.LENGTH_LONG,
+                        ).show()
+                }
+            }
+        }
 
     /**
      * BroadcastReceiver to listen for service state changes.
@@ -144,6 +169,44 @@ class MainFragment : Fragment(R.layout.fragment_main) {
      * Starts the audio playback service.
      */
     private fun startAudioService() {
+        // Check for notification permission on Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when {
+                ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.POST_NOTIFICATIONS,
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    // Permission is already granted
+                    startAudioServiceInternal()
+                }
+                shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+                    // Show rationale and request permission
+                    view?.let {
+                        Snackbar
+                            .make(
+                                it,
+                                "Notification permission is needed to show service status",
+                                Snackbar.LENGTH_LONG,
+                            ).setAction("Grant") {
+                                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            }.show()
+                    }
+                }
+                else -> {
+                    // Request permission
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        } else {
+            // No permission needed for Android 12 and below
+            startAudioServiceInternal()
+        }
+    }
+
+    /**
+     * Internal method to start the audio service after permission checks.
+     */
+    private fun startAudioServiceInternal() {
         val serviceIntent = createAudioServiceIntent()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             requireContext().startForegroundService(serviceIntent)
