@@ -2,6 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>NewLineAtEndOfFile:MainActivity.kt:dk.itu.moapd.androidservice.ui.main.MainActivity.kt</ID>
+    <ID>ReturnCount:AudioPlaybackService.kt:AudioPlaybackService$override fun onStartCommand: Int</ID>
   </CurrentIssues>
 </SmellBaseline>

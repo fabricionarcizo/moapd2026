@@ -20,12 +20,10 @@
  */
 package dk.itu.moapd.androidservice.service
 
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
-import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
@@ -220,7 +218,8 @@ class AudioPlaybackService : Service() {
      * @return The notification to be displayed while the service is running.
      */
     private fun createNotification() =
-        NotificationCompat.Builder(this, ServiceDemoApplication.AUDIO_CHANNEL_ID)
+        NotificationCompat
+            .Builder(this, ServiceDemoApplication.AUDIO_CHANNEL_ID)
             .setContentTitle(getString(R.string.notification_title))
             .setContentText(getString(R.string.notification_text))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -231,6 +230,5 @@ class AudioPlaybackService : Service() {
                     Intent(this, MainActivity::class.java),
                     PendingIntent.FLAG_IMMUTABLE,
                 ),
-            )
-            .build()
+            ).build()
 }
