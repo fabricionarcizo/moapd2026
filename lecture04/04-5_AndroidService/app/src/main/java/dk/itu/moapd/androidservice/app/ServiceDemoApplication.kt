@@ -21,7 +21,11 @@
 package dk.itu.moapd.androidservice.app
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
 import com.google.android.material.color.DynamicColors
+import dk.itu.moapd.androidservice.R
 
 /**
  * My personalized base class for maintaining global application state. You can provide your own
@@ -37,6 +41,13 @@ import com.google.android.material.color.DynamicColors
  * singleton's `getInstance()` method.
  */
 class ServiceDemoApplication : Application() {
+    companion object {
+        /**
+         * Notification channel ID for the audio playback foreground service.
+         */
+        const val AUDIO_CHANNEL_ID = "audio_playback_channel"
+    }
+
     /**
      * Called when the application is starting, before any activity, service, or receiver objects
      * (excluding content providers) have been created.
@@ -58,5 +69,28 @@ class ServiceDemoApplication : Application() {
 
         // Apply dynamic colors to activities if available.
         DynamicColors.applyToActivitiesIfAvailable(this)
+
+        // Create notification channel for foreground service
+        createNotificationChannel()
+    }
+
+    /**
+     * Creates a notification channel for the audio playback foreground service.
+     * This is required for Android O (API 26) and above.
+     */
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel =
+                NotificationChannel(
+                    AUDIO_CHANNEL_ID,
+                    getString(R.string.notification_channel_name),
+                    NotificationManager.IMPORTANCE_LOW,
+                ).apply {
+                    description = getString(R.string.notification_channel_description)
+                }
+
+            val notificationManager = getSystemService(NotificationManager::class.java)
+            notificationManager?.createNotificationChannel(channel)
+        }
     }
 }
