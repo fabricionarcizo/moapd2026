@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>FunctionNaming:MainScreen.kt:@Composable fun MainScreen</ID>
+    <ID>FunctionNaming:MainScreen.kt:@Composable private fun CheckBoxWithLabel</ID>
+    <ID>FunctionNaming:MainScreen.kt:@Composable private fun MainButtonsRow</ID>
+    <ID>FunctionNaming:Theme.kt:@Composable fun LifeCycleTheme</ID>
+    <ID>MagicNumber:Color.kt:0xFF625b71</ID>
+    <ID>MagicNumber:Color.kt:0xFF6650a4</ID>
+    <ID>MagicNumber:Color.kt:0xFF7D5260</ID>
+    <ID>MagicNumber:Color.kt:0xFFCCC2DC</ID>
+    <ID>MagicNumber:Color.kt:0xFFD0BCFF</ID>
+    <ID>MagicNumber:Color.kt:0xFFEFB8C8</ID>
+    <ID>NewLineAtEndOfFile:Color.kt:dk.itu.moapd.lifecycle.ui.theme.Color.kt</ID>
+    <ID>NewLineAtEndOfFile:Theme.kt:dk.itu.moapd.lifecycle.ui.theme.Theme.kt</ID>
+    <ID>NewLineAtEndOfFile:Type.kt:dk.itu.moapd.lifecycle.ui.theme.Type.kt</ID>
+  </CurrentIssues>
+</SmellBaseline>
